@@ -6,6 +6,9 @@ class DiamondsService {
     const res = await api.post("/diamonds", query);
     console.log(res.data);
     AppState.diamonds = res.data.Diamonds;
+    AppState.totalNumber = res.data.TotalNumberOfDiamonds;
+    AppState.nextPage = res.data.NextPage || "";
+    AppState.previousPage = res.data.PreviousPage || ""
   }
 }
 

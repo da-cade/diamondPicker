@@ -8,4 +8,7 @@ export const AppState = reactive({
     "TablePercent",
     "DepthPercent",
   ],
+  totalNumber: 0,
+  nextPage: "",
+  previousPage: "",
 });

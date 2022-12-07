@@ -1,51 +1,19 @@
 <template>
-  <div v-if="filter.labels.length" class="range_container">
+  <div v-if="filter.labels" class="range_container">
     <div class="sliders_control filter-item">
       <label for="fromSlider">${filter.handle}$</label>
       <input
-        id="fromSlider"
-        v-model="state.fromVal"
-        type="range"
-        :min="filter.min"
-        :max="filter.max"
-        @change="$emit('updateRange', filter.handle, 'fromVal', state.fromVal)"
-      />
-      <input
-        id="toSlider"
-        v-model="state.toVal"
-        type="range"
-        :style="{
-          background: sliderBackgroundGradient,
-          zIndex: state.toVal <= 0 ? 2 : 0,
-        }"
-        :min="filter.min"
-        :max="filter.max"
-        @change="$emit('updateRange', filter.handle, 'toVal', state.toVal)"
-      />
-      <datalist id="toSlider">
-        <option
-          v-for="(label, i) in filter.labels"
-          :key="label"
-          :value="i"
-          :label="label"
-        ></option>
-      </datalist>
-    </div>
-  </div>
-  <div v-else class="range_container">
-    <div class="sliders_control">
-      <label for="fromSlider">${filter.handle}$</label>
-      <input
-        :id="state.handle + '-fromSlider'"
+        :id="filter.handle + '-fromSlider'"
         v-model="state.fromVal"
         type="range"
         :min="filter.min"
         :max="filter.max"
         @change="$emit('updateRange', filter.handle, 'fromVal', state.fromVal)"
         class="fromSlider"
+        style="height: 0; z-index: 1"
       />
       <input
-        :id="state.handle + '-toSlider'"
+        :id="filter.handle + '-toSlider'"
         v-model="state.toVal"
         type="range"
         :style="{
@@ -57,8 +25,9 @@
         @change="$emit('updateRange', filter.handle, 'toVal', state.toVal)"
         class="toSlider"
       />
-      <datalist :id="state.handle + '-toSlider'">
+      <datalist :id="filter.handle + '-toSlider'">
         <option
+          :style="computeWidth"
           v-for="(label, i) in filter.labels"
           :key="label"
           :value="i"
@@ -66,12 +35,69 @@
         ></option>
       </datalist>
     </div>
-    <span> ${ state.fromVal }$ ${ state.toVal }$</span>
+  </div>
+  <div v-else class="range_container">
+    <div class="sliders_control filter-item">
+      <label for="fromSlider">${filter.handle}$</label>
+      <input
+        :id="filter.handle + '-fromSlider'"
+        v-model="state.fromVal"
+        type="range"
+        :min="filter.min"
+        :max="filter.max"
+        :step="step"
+        @change="$emit('updateRange', filter.handle, 'fromVal', state.fromVal)"
+        class="fromSlider"
+        style="height: 0; z-index: 1"
+      />
+      <input
+        :id="filter.handle + '-toSlider'"
+        v-model="state.toVal"
+        type="range"
+        :style="{
+          background: sliderBackgroundGradient,
+          zIndex: state.toVal <= 0 ? 2 : 0,
+        }"
+        :min="filter.min"
+        :max="filter.max"
+        :step="step"
+        @change="$emit('updateRange', filter.handle, 'toVal', state.toVal)"
+        class="toSlider"
+      />
+      <datalist :id="filter.handle + '-toSlider'">
+        <option
+          v-for="(label, i) in options"
+          :key="label"
+          :value="i"
+          :label="label"
+        ></option>
+      </datalist>
+    </div>
+    <div class="num-inputs-container">
+      <input
+        type="number"
+        name="ending-value"
+        v-model="state.fromVal"
+        :min="filter.min"
+        :max="filter.max"
+        :step="step"
+        id="ending-val-input"
+      />
+      <input
+        type="number"
+        name="starting-value"
+        v-model="state.toVal"
+        :min="filter.min"
+        :max="filter.max"
+        :step="step"
+        id="starting-val-input"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import { computed, onMounted, reactive } from "@vue/runtime-core";
+import { computed, onMounted, reactive, watch } from "@vue/runtime-core";
 export default {
   emits: ["updateRange"],
   props: {
@@ -85,11 +111,29 @@ export default {
       toVal: null,
     });
 
+    const computeWidth = computed(() => {
+      const width = Math.floor((1 / props.filter.labels.length) * 100);
+      return `width: ${width}%`;
+    });
+
+    const step = computed(() => {
+      return props.filter.min < 1 ? ".1" : "1";
+    });
+
+    const options = computed(() => {
+      const values = 4;
+      let output = [(+props.filter.min).toLocaleString()];
+      for (let i = 1; i <= values; i++) {
+        output.push((+props.filter.max * 0.25 * i).toLocaleString());
+      }
+      return output;
+    });
+
     const sliderBackgroundGradient = computed(() => {
       const rangeDistance = props.filter.max - props.filter.min;
       const fromPosition = state.fromVal - props.filter.min;
       const toPosition = state.toVal - props.filter.min;
-      const output = `linear-gradient(
+      return `linear-gradient(
       to right,
       ${props.sliderColor} 0%,
       ${props.sliderColor} ${(fromPosition / rangeDistance) * 100}%,
@@ -97,9 +141,24 @@ export default {
       ${props.rangeColor} ${(toPosition / rangeDistance) * 100}%,
       ${props.sliderColor} ${(toPosition / rangeDistance) * 100}%,
       ${props.sliderColor} 100%)`;
-
-      return output;
     });
+
+    watch(
+      () => ({ ...state }),
+      (value, oldValue) => {
+        if (oldValue.fromVal) {
+          if (+value.fromVal > +value.toVal && value.toVal === oldValue.toVal) {
+            state.fromVal = state.toVal;
+          }
+          if (
+            +value.toVal < +value.fromVal &&
+            value.fromVal === oldValue.fromVal
+          ) {
+            state.toVal = state.fromVal;
+          }
+        }
+      }
+    );
 
     onMounted(() => {
       state.fromVal = props.filter.min;
@@ -108,18 +167,20 @@ export default {
 
     return {
       state,
+      step,
+      options,
+      computeWidth,
       sliderBackgroundGradient,
     };
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .filter-item {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 2rem;
 }
 
 .filter-item > label {
@@ -156,6 +217,7 @@ input[type="range"]::-webkit-slider-thumb:active {
   box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
   -webkit-box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
 }
+
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -166,15 +228,24 @@ input[type="range"] {
   pointer-events: none;
 }
 
-.fromSlider {
-  height: 0;
-  z-index: 1;
+.num-inputs-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  input[type="number"] {
+    width: 15%;
+  }
 }
 
 datalist {
   display: flex;
   margin: 0 auto;
   justify-content: space-between;
-  width: 80%;
+  width: 100%;
+}
+
+option {
+  display: flex;
+  justify-content: center;
 }
 </style>

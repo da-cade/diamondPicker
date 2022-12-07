@@ -19,17 +19,15 @@
 <template>
   <div class="index__content container-fluid" style="width: 100%">
     <div class="section__filters row">
-      <div class="col-6 gem-buttons">
+      <div class="col-8 gem-buttons">
         <div
-          v-for="shape in filterLabels.Shape.values"
+          v-for="shape in shapes.values"
           :key="shape"
-          :class="
-            filterValues.Shape.values.includes(shape) ? 'checked' : 'unchecked'
-          "
+          :class="state.Shape.includes(shape) ? 'checked' : 'unchecked'"
           class="gem-input"
         >
           <input
-            :checked="filterValues.Shape.values.includes(shape)"
+            :checked="state.Shape.includes(shape)"
             @change="updateShapes(shape)"
             class="gem-item"
             type="checkbox"
@@ -42,14 +40,55 @@
           >
         </div>
       </div>
-      <div class="col-6">
-        <range-slider :filter="filterValues.Cut" @update-range="updateRange">
+    </div>
+    <div class="section__filters row">
+      <div
+        class="col-6 mb-5"
+        v-for="filter in firstLabelSet"
+        :key="filter.handle"
+      >
+        <range-slider :filter="filter" @update-range="updateRange">
         </range-slider>
       </div>
     </div>
+    <div class="accordion mt-5" id="accordionExample">
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h2 class="mb-0">
+            <button
+              class="btn btn-link collapsed"
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseTwo"
+              aria-expanded="false"
+              aria-controls="collapseTwo"
+            >
+              Advanced Filters
+            </button>
+          </h2>
+        </div>
+        <div
+          id="collapseTwo"
+          class="collapse"
+          aria-labelledby="headingTwo"
+          data-parent="#accordionExample"
+        >
+          <div class="card-body section__filters row">
+            <div
+              class="col-6 mb-5"
+              v-for="filter in secondLabelSet"
+              :key="filter.handle"
+            >
+              <range-slider :filter="filter" @update-range="updateRange">
+              </range-slider>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="section__body mt-5">
-    <div class="showX">
+  <div class="section__body container-fluid mt-5">
+    <div class="section__showX">
       <span
         >Showing
         <button
@@ -75,7 +114,7 @@
         per page.</span
       >
     </div>
-    <div class="section__index container-fluid">
+    <div class="section__index">
       <table class="table">
         <thead>
           <tr class="">
@@ -117,6 +156,18 @@
         </tbody>
       </table>
     </div>
+    <div class="section__pagination">
+      <button v-for="p in pages.slice(0, 7)" :key="p" @click="showPage(p)">
+        ${p}$
+      </button>
+      <span v-if="pages.length > 9">...</span>
+      <button
+        v-if="pages.length > 9"
+        @click="showPage(pages[pages.length - 1])"
+      >
+        ${pages[pages.length - 1]}$
+      </button>
+    </div>
     <div class="side-details">
       <side-details />
     </div>
@@ -139,15 +190,44 @@ export default {
     const state = reactive({
       loaded: false,
       showX: 20,
+      page: 1,
       sortBy: "",
       sortReverse: false,
       timeoutID: undefined,
-      sendRequest: false,
+      sendRequest: true,
+      Shape: [
+        "Round",
+        "Square",
+        "Oval",
+        "Marquise",
+        "Emerald",
+        "Heart",
+        "Pear",
+        "Trillion",
+        "Radiant",
+        "Cushion",
+        "Asscher",
+      ],
     });
+
     const filterValues = ref(
       JSON.parse(JSON.stringify(TemplateData.filterLabels))
     );
+
     const displayDiamonds = ref([]);
+
+    const pagesLoaded = computed(() => {
+      return Math.ceil(AppState.diamonds.length / state.showX);
+    });
+
+    // TODO delete this
+    const pages = computed(() => {
+      let numbers = [];
+      for (let i = 1; i <= Math.ceil(AppState.totalNumber / state.showX); i++) {
+        numbers.push(i);
+      }
+      return numbers;
+    });
 
     const handleTimer = {
       passToUpdate(filter) {
@@ -170,14 +250,32 @@ export default {
     watchEffect(async () => {
       if (
         filterValues.value !== undefined &&
-        typeof state.timeoutID !== "number"
+        typeof state.timeoutID !== "number" &&
+        state.sendRequest
       ) {
-        console.log("it me, watch effect");
         await requestUpdates();
         state.sendRequest = false;
         state.loaded = true;
       }
     });
+
+    async function showPage(pageNum) {
+      pageNum = parseInt(pageNum);
+      // if pageNumber is greater than current page + pagesLoaded.value or less than that:
+      if (
+        pageNum > state.page + pagesLoaded.value ||
+        pageNum < state.page - pagesLoaded.value
+      ) {
+        let requestPage = Math.ceil((pageNum * state.showX) / 200);
+        await requestUpdates(requestPage);
+      } else {
+        displayDiamonds.value = AppState.diamonds.slice(
+          state.showX * (pageNum - 1),
+          state.showX * (pageNum - 1) + state.showX
+        );
+      }
+      state.page = pageNum;
+    }
 
     watchEffect(() => {
       if (AppState.diamonds.length) {
@@ -225,26 +323,32 @@ export default {
 
     function updateShapes(shapeItem) {
       state.loaded = false;
-      let index = filterValues.value.Shape.values;
+      let index = state.Shape;
       if (!index.includes(shapeItem)) {
         index.push(shapeItem);
       } else {
         index = index.filter((s) => s !== shapeItem);
       }
-      filterValues.value.Shape.values = index;
+      state.Shape = index;
+      console.log(shapeItem, index);
       handleTimer.setup("Shape");
     }
 
     function updateDiamonds(filter) {
       try {
-        let reactiveIndex = filterValues.value[filter];
-        if (!AppState.intFilters.includes(filter)) {
-          reactiveIndex.values = reactiveIndex.labels.slice(
-            +reactiveIndex.fromVal,
-            +reactiveIndex.toVal
-          );
-        } else {
-          reactiveIndex.values = [+reactiveIndex.fromVal, +reactiveIndex.toVal];
+        if (!filter == "Shape") {
+          let reactiveIndex = filterValues.value[filter];
+          if (!AppState.intFilters.includes(filter)) {
+            reactiveIndex.values = reactiveIndex.labels.slice(
+              +reactiveIndex.fromVal,
+              +reactiveIndex.toVal
+            );
+          } else {
+            reactiveIndex.values = [
+              +reactiveIndex.fromVal,
+              +reactiveIndex.toVal,
+            ];
+          }
         }
         state.sendRequest = true;
         state.loaded = true;
@@ -253,14 +357,15 @@ export default {
       }
     }
 
-    async function requestUpdates() {
+    async function requestUpdates(page) {
       try {
         const formData = {};
         const filterData = JSON.parse(JSON.stringify(filterValues.value));
         for (const key in filterData) {
           formData[key] = filterData[key].values;
         }
-        console.log(formData);
+        formData["Shape"] = JSON.parse(JSON.stringify(state.Shape));
+        formData["Page"] = page ? page : "";
         await diamondsService.getDiamondsByQuery(formData);
       } catch (error) {
         console.log(error.message);
@@ -269,13 +374,30 @@ export default {
 
     return {
       state,
-      filterLabels: computed(() => TemplateData.filterLabels),
+      firstLabelSet: computed(() => [
+        TemplateData.filterLabels.PriceRange,
+        TemplateData.filterLabels.SizeRange,
+      ]),
+      secondLabelSet: computed(() => [
+        TemplateData.filterLabels.Cut,
+        TemplateData.filterLabels.Color,
+        TemplateData.filterLabels.Clarity,
+        TemplateData.filterLabels.Polish,
+        TemplateData.filterLabels.Symmetry,
+        TemplateData.filterLabels.Fluorescence,
+        TemplateData.filterLabels.LengthToWidthRatio,
+        TemplateData.filterLabels.DepthPercent,
+        TemplateData.filterLabels.TablePercent,
+      ]),
+      shapes: computed(() => TemplateData.Shape),
+      pages,
       filterValues,
       displayDiamonds,
       sortItems,
       updateRange,
       updateShapes,
       updateDiamonds,
+      showPage,
     };
   },
 };
@@ -285,14 +407,17 @@ export default {
 @import "./assets/diashapes-v6.css";
 
 .section__filters {
-  width: 100%;
-  outline: solid;
-  outline-color: red;
 }
 .section__body {
+}
+.section__index {
+}
+.section__showX {
+}
+.section__pagination {
+  display: flex;
   width: 100%;
-  outline: solid;
-  outline-color: green;
+  justify-content: end;
 }
 
 .filter-item > input {
@@ -329,8 +454,6 @@ $accent-color: rgb(255, 201, 201);
   transition: transform 150ms ease;
   i,
   input {
-    // width: $icon-size;
-    // height: $icon-size;
     font-size: $icon-size;
     background-color: transparent;
     z-index: 2;
