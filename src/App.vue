@@ -19,7 +19,8 @@
 <template>
   <div class="index__content container-fluid" style="width: 100%">
     <div class="section__filters row">
-      <div class="col-8 gem-buttons">
+      <div class="col"><h1>The Portsche's Diamond Index</h1></div>
+      <div class="col-6 gem-buttons mb-3">
         <div
           v-for="shape in shapes.values"
           :key="shape"
@@ -51,12 +52,12 @@
         </range-slider>
       </div>
     </div>
-    <div class="accordion mt-5" id="accordionExample">
+    <div class="accordion" id="accordionExample">
       <div class="card">
         <div class="card-header" id="headingTwo">
           <h2 class="mb-0">
             <button
-              class="btn btn-link collapsed"
+              class="collapsed"
               type="button"
               data-toggle="collapse"
               data-target="#collapseTwo"
@@ -450,6 +451,7 @@ $accent-color: rgb(255, 201, 201);
   border: 1px solid black;
   position: relative;
   height: fit-content;
+  flex-grow: 1;
   z-index: 0;
   transition: transform 150ms ease;
   i,
