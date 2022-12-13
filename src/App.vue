@@ -52,40 +52,48 @@
         </range-slider>
       </div>
     </div>
-    <div class="accordion" id="accordionExample">
-      <div class="card">
-        <div class="card-header" id="headingTwo">
-          <h2 class="mb-0">
-            <button
-              class="collapsed"
-              type="button"
-              data-toggle="collapse"
-              data-target="#collapseTwo"
-              aria-expanded="false"
-              aria-controls="collapseTwo"
-            >
-              Advanced Filters
-            </button>
-          </h2>
-        </div>
-        <div
-          id="collapseTwo"
-          class="collapse"
-          aria-labelledby="headingTwo"
-          data-parent="#accordionExample"
-        >
-          <div class="card-body section__filters row">
-            <div
-              class="col-6 mb-5"
-              v-for="filter in secondLabelSet"
-              :key="filter.handle"
-            >
-              <range-slider :filter="filter" @update-range="updateRange">
-              </range-slider>
-            </div>
+    <div class="custom-accordion" id="accordionExample">
+      <div class="">
+        <h2 class="accordion-heading">
+          <button @click="state.isExpanded = !state.isExpanded">
+            Advanced Filters
+          </button>
+
+          <svg
+            class="header-icon"
+            :class="{ rotate: state.isExpanded }"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            />
+          </svg>
+        </h2>
+      </div>
+      <Transition
+        name="accordion"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @before-leave="beforeLeave"
+        @leave="leave"
+      >
+        <div class="accordion-item-details row" v-show="state.isExpanded">
+          <div
+            class="col-6 mb-5"
+            v-for="filter in secondLabelSet"
+            :key="filter.handle"
+          >
+            <range-slider :filter="filter" @update-range="updateRange">
+            </range-slider>
           </div>
         </div>
-      </div>
+      </Transition>
     </div>
   </div>
   <div class="section__body container-fluid mt-5">
@@ -189,6 +197,7 @@ export default {
   components: { DetailsModal, SideDetails, RangeSlider },
   setup() {
     const state = reactive({
+      isExpanded: false,
       loaded: false,
       showX: 20,
       page: 1,
@@ -216,6 +225,19 @@ export default {
     );
 
     const displayDiamonds = ref([]);
+
+    const beforeEnter = (el) => {
+      el.style.height = "0";
+    };
+    const enter = (el) => {
+      el.style.height = el.scrollHeight + "px";
+    };
+    const beforeLeave = (el) => {
+      el.style.height = el.scrollHeight + "px";
+    };
+    const leave = (el) => {
+      el.style.height = "0";
+    };
 
     const pagesLoaded = computed(() => {
       return Math.ceil(AppState.diamonds.length / state.showX);
@@ -367,7 +389,9 @@ export default {
         }
         formData["Shape"] = JSON.parse(JSON.stringify(state.Shape));
         formData["Page"] = page ? page : "";
-        await diamondsService.getDiamondsByQuery(formData);
+        console.log(formData);
+        console.log("request sent");
+        await diamondsService.getDiamondsByQuery({});
       } catch (error) {
         console.log(error.message);
       }
@@ -399,6 +423,10 @@ export default {
       updateShapes,
       updateDiamonds,
       showPage,
+      beforeEnter,
+      enter,
+      beforeLeave,
+      leave,
     };
   },
 };
@@ -502,5 +530,39 @@ $accent-color: rgb(255, 201, 201);
   label {
     color: rgb(0, 0, 0);
   }
+}
+
+.accordion-heading {
+  height: 40px;
+  line-height: 40px;
+  padding: 0 40px 0 8px;
+  position: relative;
+  color: #fff;
+  cursor: pointer;
+}
+
+.header-icon {
+  color: black;
+  position: absolute;
+  height: 1.5rem;
+  width: 1.5rem;
+  top: 5px;
+  // right: 8px;
+  transform: rotate(-180deg);
+  transition-duration: 0.3s;
+}
+
+.header-icon.rotate {
+  transform: rotate(0deg);
+  transition-duration: 0.3s;
+}
+
+.accordion-item-details {
+  overflow: hidden;
+  background-color: #fff;
+  border-top: 0;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  transition: 150ms ease-out;
 }
 </style>
