@@ -8,7 +8,7 @@
         type="range"
         :min="filter.min"
         :max="filter.max"
-        @change="$emit('updateRange', filter.handle, 'fromVal', state.fromVal)"
+        @change="updateDiamonds(filter.title, 'fromVal', state.fromVal)"
         class="fromSlider"
         style="height: 0; z-index: 1"
       />
@@ -22,7 +22,7 @@
         }"
         :min="filter.min"
         :max="filter.max"
-        @change="$emit('updateRange', filter.handle, 'toVal', state.toVal)"
+        @change="updateDiamonds(filter.title, 'toVal', state.toVal)"
         class="toSlider"
       />
       <datalist :id="filter.handle + '-toSlider'">
@@ -46,7 +46,7 @@
         :min="filter.min"
         :max="filter.max"
         :step="step"
-        @change="$emit('updateRange', filter.handle, 'fromVal', state.fromVal)"
+        @change="updateDiamonds(filter.title, 'fromVal', state.fromVal)"
         class="fromSlider"
         style="height: 0; z-index: 1"
       />
@@ -61,7 +61,7 @@
         :min="filter.min"
         :max="filter.max"
         :step="step"
-        @change="$emit('updateRange', filter.handle, 'toVal', state.toVal)"
+        @change="updateDiamonds(filter.title, 'toVal', state.toVal)"
         class="toSlider"
       />
       <datalist :id="filter.handle + '-toSlider'">
@@ -97,7 +97,8 @@
 </template>
 
 <script>
-import { computed, onMounted, reactive, watch } from "@vue/runtime-core";
+import { computed, onMounted, reactive, watch } from "vue";
+import { AppState } from "../services/AppState";
 export default {
   emits: ["updateRange"],
   props: {
@@ -111,13 +112,18 @@ export default {
       toVal: null,
     });
 
-    const computeWidth = computed(() => {
-      const width = Math.floor((1 / props.filter.labels.length) * 100);
-      return `width: ${width}%`;
+    onMounted(() => {
+      state.fromVal = props.filter.min;
+      state.toVal = props.filter.max;
     });
 
     const step = computed(() => {
       return props.filter.min < 1 ? ".1" : "1";
+    });
+
+    const computeWidth = computed(() => {
+      const width = Math.floor((1 / props.filter.labels.length) * 100);
+      return `width: ${width}%`;
     });
 
     const options = computed(() => {
@@ -160,10 +166,21 @@ export default {
       }
     );
 
-    onMounted(() => {
-      state.fromVal = props.filter.min;
-      state.toVal = props.filter.max;
-    });
+    function updateDiamonds(filter, rangeValue, update) {
+      AppState.filterValues[filter][rangeValue] = +update;
+      let reactiveIndex = AppState.filterValues[filter];
+      if (!AppState.intFilters.includes(filter)) {
+        reactiveIndex.values = reactiveIndex.labels.slice(
+          +reactiveIndex.fromVal,
+          +reactiveIndex.toVal
+        );
+      } else {
+        reactiveIndex.values = [+reactiveIndex.fromVal, +reactiveIndex.toVal];
+      }
+      console.log(AppState.filterValues[filter].values);
+      AppState.sendRequest = true;
+      // TODO trigger the watcheffect in the container
+    }
 
     return {
       state,
@@ -171,6 +188,7 @@ export default {
       options,
       computeWidth,
       sliderBackgroundGradient,
+      updateDiamonds,
     };
   },
 };

@@ -1,6 +1,8 @@
 import { reactive } from "vue";
+import { TemplateData } from "../assets/TemplateData";
 export const AppState = reactive({
   diamonds: [],
+  displayDiamonds: [],
   intFilters: [
     "PriceRange",
     "SizeRange",
@@ -8,7 +10,15 @@ export const AppState = reactive({
     "TablePercent",
     "DepthPercent",
   ],
+  filterValues: JSON.parse(JSON.stringify(TemplateData.filterLabels)),
+
   totalNumber: 0,
-  nextPage: "",
-  previousPage: "",
+  currentPage: 1,
+  workingSection: 1,
+
+  staggerLoad: false,
+  nextSetDiamonds: [],
+  sendRequest: true,
+  timeoutID: "",
+  loaded: false,
 });

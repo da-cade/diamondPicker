@@ -1,6 +1,7 @@
 export const TemplateData = {
   filterLabels: {
     PriceRange: {
+      title: "PriceRange",
       handle: "Price Range",
       values: [1000, 50000],
       min: 1000,
@@ -9,6 +10,7 @@ export const TemplateData = {
       toVal: 50000,
     },
     SizeRange: {
+      title: "SizeRange",
       handle: "Carat",
       values: [0.1, 20.0],
       min: 0.1,
@@ -17,6 +19,7 @@ export const TemplateData = {
       toVal: 20.0,
     },
     Cut: {
+      title: "Cut",
       handle: "Cut",
       values: ["Fair", "Good", "VeryGood", "Excellent", "Ideal"],
       labels: ["Fair", "Good", "Very Good", "Excellent", "Ideal"],
@@ -26,6 +29,7 @@ export const TemplateData = {
       toVal: 5,
     },
     Color: {
+      title: "Color",
       handle: "Color",
       values: ["J", "I", "H", "G", "F", "E", "D"],
       labels: ["J", "I", "H", "G", "F", "E", "D"],
@@ -35,6 +39,7 @@ export const TemplateData = {
       toVal: 7,
     },
     Clarity: {
+      title: "Clarity",
       handle: "Clarity",
       values: [
         "I3",
@@ -68,6 +73,7 @@ export const TemplateData = {
       toVal: 11,
     },
     Polish: {
+      title: "Polish",
       handle: "Polish",
       values: ["Poor", "Fair", "Good", "VeryGood", "Excellent", "Ideal"],
       labels: ["Poor", "Fair", "Good", "Very Good", "Excellent", "Ideal"],
@@ -77,6 +83,7 @@ export const TemplateData = {
       toVal: 6,
     },
     Symmetry: {
+      title: "Symmetry",
       handle: "Symmetry",
       values: ["Minute", "Fair", "Good", "VeryGood", "Excellent", "Ideal"],
       labels: ["Minute", "Fair", "Good", "Very Good", "Excellent", "Ideal"],
@@ -86,6 +93,7 @@ export const TemplateData = {
       toVal: 6,
     },
     Fluorescence: {
+      title: "Fluorescence",
       handle: "Fluorescence",
       values: ["VeryStrong", "Strong", "Medium", "Faint", "None"],
       labels: ["Very Strong", "Strong", "Medium", "Faint", "None"],
@@ -95,6 +103,7 @@ export const TemplateData = {
       toVal: 5,
     },
     LengthToWidthRatio: {
+      title: "LengthToWidthRatio",
       handle: "Length/Width Ratio",
       values: [0.1, 3.0],
       min: 0.1,
@@ -103,6 +112,7 @@ export const TemplateData = {
       toVal: 3.0,
     },
     DepthPercent: {
+      title: "DepthPercent",
       handle: "Depth %",
       values: [0, 100],
       min: 0,
@@ -111,6 +121,7 @@ export const TemplateData = {
       toVal: 100,
     },
     TablePercent: {
+      title: "TablePercent",
       handle: "Table %",
       values: [0, 100],
       min: 0,
@@ -120,6 +131,7 @@ export const TemplateData = {
     },
   },
   Shape: {
+    title: "Shape",
     handle: "Shape",
     values: [
       "Round",
