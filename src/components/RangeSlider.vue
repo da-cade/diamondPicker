@@ -99,6 +99,7 @@
 <script>
 import { computed, onMounted, reactive, watch } from "vue";
 import { AppState } from "../services/AppState";
+import { TemplateData } from "../assets/TemplateData";
 export default {
   emits: ["updateRange"],
   props: {
@@ -169,7 +170,7 @@ export default {
     function updateDiamonds(filter, rangeValue, update) {
       AppState.filterValues[filter][rangeValue] = +update;
       let reactiveIndex = AppState.filterValues[filter];
-      if (!AppState.intFilters.includes(filter)) {
+      if (!TemplateData.intFilters.includes(filter)) {
         reactiveIndex.values = reactiveIndex.labels.slice(
           +reactiveIndex.fromVal,
           +reactiveIndex.toVal

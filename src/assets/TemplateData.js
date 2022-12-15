@@ -147,4 +147,11 @@ export const TemplateData = {
       "Asscher",
     ],
   },
+  intFilters: [
+    "PriceRange",
+    "SizeRange",
+    "LengthToWidthRatio",
+    "TablePercent",
+    "DepthPercent",
+  ],
 };

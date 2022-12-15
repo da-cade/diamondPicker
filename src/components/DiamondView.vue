@@ -26,7 +26,8 @@
         per page.</span
       >
     </div>
-    <div class="section__index">
+    <div v-if="!loaded" class="loader">Loading</div>
+    <div v-else class="section__index">
       <table class="table">
         <thead>
           <tr class="">
@@ -87,41 +88,28 @@ export default {
   components: { SideDetails, PaginationMenu },
   setup() {
     const state = reactive({
-      showX: 20,
+      showX: 50,
       sortBy: "",
       sortReverse: false,
+      timeoutID: undefined,
     });
 
-    const handleTimer = {
-      async passToUpdate() {
-        await diamondsService.getDiamondsByQuery();
-        if (AppState.staggerLoad) {
-          AppState.staggerLoad = !AppState.staggerLoad;
-        }
-        AppState.timeoutID = undefined;
-      },
-      setup() {
-        if (typeof AppState.timeoutID === "number") {
-          this.cancel();
-        }
-        AppState.timeoutID = setTimeout(() => {
-          this.passToUpdate();
-        }, 1000);
-      },
-      cancel() {
-        clearTimeout(AppState.timeoutID);
-      },
-    };
-
     watchEffect(async () => {
-      if (AppState.sendRequest) {
-        handleTimer.setup();
-        AppState.sendRequest = !AppState.sendRequest;
-      }
+      // if (AppState.sendRequest) {
+      // AppState.sendRequest = false;
+      // await diamondsService.getDiamondsByQuery();
+      // }
     });
 
     watchEffect(() => {
-      if (AppState.diamonds.length) {
+      if (AppState.diamonds.length && AppState.loaded) {
+        const workingPages = Math.ceil(AppState.diamonds.length / state.showX);
+
+        AppState.workingSection =
+          AppState.displayPage % workingPages !== 0
+            ? AppState.displayPage % workingPages
+            : workingPages;
+
         AppState.displayDiamonds = AppState.diamonds.slice(
           state.showX * (AppState.workingSection - 1),
           state.showX * AppState.workingSection
@@ -161,9 +149,12 @@ export default {
         }
       }
     }
+
     return {
       state,
       displayDiamonds: computed(() => AppState.displayDiamonds),
+      // loaded: computed(() => AppState.loaded),
+      loaded: true,
       sortItems,
     };
   },
@@ -172,4 +163,10 @@ export default {
 
 
 <style lang="scss" scoped>
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+}
 </style>

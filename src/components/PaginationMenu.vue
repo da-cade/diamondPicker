@@ -1,14 +1,22 @@
 <template>
   <div class="section__pagination">
-    <button v-for="p in pageList" :key="p" @click="showPage(p)">${p}$</button>
-    <button @click="showPage(lastPage)">${lastPage}$</button>
+    <button v-if="!pageList.includes(1)" @click="showPage(1)">1</button>
+    <button @click="showPage(pageList[0])">${pageList[0]}$</button>
+    <button @click="showPage(pageList[1])">${pageList[1]}$</button>
+    <button @click="showPage(pageList[2])">${pageList[2]}$</button>
+    <button @click="showPage(pageList[3])">${pageList[3]}$</button>
+    <button @click="showPage(pageList[4])">${pageList[4]}$</button>
+    <button v-if="!pageList.includes(lastPage)" @click="showPage(lastPage)">
+      ${lastPage}$
+    </button>
   </div>
 </template>
 
 
 <script>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { AppState } from "../services/AppState";
+import { diamondsService } from "../services/DiamondsService";
 export default {
   props: {
     showX: {
@@ -18,84 +26,63 @@ export default {
   },
 
   setup(props) {
-    let localPage = ref(1);
     const lastPage = computed(() => {
       return Math.ceil(AppState.totalNumber / props.showX);
     });
 
-    // this represents the number of pages we can load without requesting more.
-
-    // this represents the total number of pages possible based on how many diamonds we choose to show.
+    // the reactive code to change the pages displayed
     const pageList = computed(() => {
-      let pageList = [];
-      let start = 0;
-      let end = 0;
-      console.log(pageList);
-      if (localPage.value < 3) {
-        start = 1;
-        end = 1 + 4;
-      } else if (localPage.value <= lastPage.value - 3) {
-        end = lastPage.value;
+      let list = [];
+      if (
+        AppState.displayPage >= 3 &&
+        AppState.displayPage <= lastPage.value - 2
+      ) {
+        list[0] = 1;
+        list[1] = AppState.displayPage - 1;
+        list[2] = AppState.displayPage;
+        list[3] = AppState.displayPage + 1;
+        list[4] = lastPage.value;
       } else {
-        start = localPage.value - 2;
-        end = localPage.value + 2;
+        list[0] = 1;
+        list[1] = 2;
+        list[2] = 3;
+        list[3] = 4;
+        list[4] = lastPage.value;
       }
-      for (let i = start; i <= end; i++) {
-        pageList.push(i);
-      }
-      return pageList;
-    });
 
-    const workingPages = computed(() => {
-      return AppState.diamonds.length / props.showX;
+      return list;
     });
 
     async function showPage(pageNum) {
       pageNum = parseInt(pageNum);
+      let currentPage = Math.ceil((AppState.displayPage * props.showX) / 200);
+      let desiredPage = Math.ceil((pageNum * props.showX) / 200);
 
-      // if pageNumber is greater than current page + pagesLoaded.value or less than that:
-      AppState.currentPage = Math.ceil((pageNum * props.showX) / 200);
-      // i want to show the results based on the current api page, but slice the results to reflect where in the local pages we are
-      // get local page, that equals pageNum. slice the results based on showX, and the portion of the available diamonds that are shown according to the pageNum.
-      // working pages reflects the number of pages we have to work with.
-      AppState.workingSection =
-        pageNum % workingPages.value !== 0
-          ? pageNum % workingPages.value
-          : workingPages.value;
+      AppState.currentPage = desiredPage;
+      AppState.displayPage = pageNum;
 
-      if (
-        pageNum > workingPages.value + localPage.value ||
-        pageNum < localPage.value - workingPages.value
-      ) {
-        AppState.sendRequest = !AppState.sendRequest;
-      } else if (AppState.workingSection == workingPages.value) {
-        AppState.staggerLoad = !AppState.staggerLoad;
-        AppState.sendRequest = !AppState.sendRequest;
-      } else if (AppState.workingSection == 1) {
-        AppState.diamonds = JSON.parse(
-          JSON.stringify(AppState.nextSetDiamonds)
-        );
-      } else {
-        return;
+      console.log(currentPage, desiredPage);
+
+      if (desiredPage !== currentPage) {
+        if (Math.abs(desiredPage - currentPage) >= 2) {
+          AppState.prevPageDiamonds = [];
+          AppState.nextPageDiamonds = [];
+          await diamondsService.getDiamondsByQuery();
+        } else {
+          if (desiredPage > currentPage) {
+            AppState.prevPageDiamonds = AppState.diamonds;
+            AppState.diamonds = AppState.nextPageDiamonds;
+            await diamondsService.getNextPage();
+          } else {
+            AppState.nextPageDiamonds = AppState.diamonds;
+            AppState.diamonds = AppState.prevPageDiamonds;
+            await diamondsService.getPrevPage();
+          }
+        }
       }
-      localPage.value = pageNum;
-
-      // if (
-      //   pageNum > localPage.value + pagesLoaded.value ||
-      //   pageNum < localPage.value - pagesLoaded.value
-      // ) {
-      //   AppState.currentPage = Math.ceil((pageNum * props.showX) / 200);
-      //   AppState.sendRequest = !AppState.sendRequest;
-      // } else {
-      //   AppState.displayDiamonds = AppState.diamonds.slice(
-      //     props.showX * (pageNum - 1),
-      //     props.showX * (pageNum - 1) + props.showX
-      //   );
-      // }
-      localPage.value = pageNum;
     }
+
     return {
-      localPage,
       lastPage,
       pageList,
       showPage,

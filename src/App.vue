@@ -27,9 +27,14 @@
 import DetailsModal from "./components/DetailsModal.vue";
 import FilterContainer from "./components/FilterContainer.vue";
 import DiamondView from "./components/DiamondView.vue";
+import { onMounted } from "vue";
+import { diamondsService } from "./services/DiamondsService";
 export default {
   components: { DetailsModal, FilterContainer, DiamondView },
   setup() {
+    onMounted(async () => {
+      await diamondsService.getDiamondsByQuery();
+    });
     return {};
   },
 };
