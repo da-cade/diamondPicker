@@ -61,12 +61,14 @@ class DiamondsService {
   }
   async getDiamondsByQuery() {
     AppState.loaded = false;
+    // @ts-ignore
     AppState.parameters = this.formatData()
     // const res = await api.post("/apps/api/diamonds", query);
     let res = await this.sendRequest()
     console.log(res.data);
     AppState.diamonds = res.data.Diamonds;
     AppState.totalNumber = res.data.TotalNumberOfDiamonds;
+    AppState.displayPage = 1;
     AppState.loaded = true
     if (AppState.currentPage !== 1) {
       if (!AppState.prevPageDiamonds.length) {

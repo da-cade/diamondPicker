@@ -12,10 +12,9 @@ export const AppState = reactive({
 
   totalNumber: 0,
   currentPage: 1,
-  displayPage: 1,
+  displayPage: 0,
   workingSection: 1,
 
-  staggerLoad: false,
   sendRequest: false,
   timeoutID: undefined,
   loaded: false,

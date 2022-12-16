@@ -81,7 +81,6 @@
 import { computed, reactive } from "vue";
 import { watchEffect } from "vue";
 import { AppState } from "../services/AppState";
-import { diamondsService } from "../services/DiamondsService";
 import SideDetails from "./SideDetails.vue";
 import PaginationMenu from "./PaginationMenu.vue";
 export default {
@@ -94,6 +93,7 @@ export default {
       timeoutID: undefined,
     });
 
+    // TODO implement logic for changing filters, handling timer etc. this could potentially just be a watchEffect for filters.
     watchEffect(async () => {
       // if (AppState.sendRequest) {
       // AppState.sendRequest = false;
@@ -101,14 +101,17 @@ export default {
       // }
     });
 
+    // Logic which determines the number of pages that can be displayed without another request, and logic which determines the portion of the state data to display based on the viewer's selected page.
     watchEffect(() => {
       if (AppState.diamonds.length && AppState.loaded) {
-        const workingPages = Math.ceil(AppState.diamonds.length / state.showX);
+        const availableDisplayPages = Math.ceil(
+          AppState.diamonds.length / state.showX
+        );
 
         AppState.workingSection =
-          AppState.displayPage % workingPages !== 0
-            ? AppState.displayPage % workingPages
-            : workingPages;
+          AppState.displayPage % availableDisplayPages !== 0
+            ? AppState.displayPage % availableDisplayPages
+            : availableDisplayPages;
 
         AppState.displayDiamonds = AppState.diamonds.slice(
           state.showX * (AppState.workingSection - 1),
