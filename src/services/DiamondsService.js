@@ -68,6 +68,7 @@ class DiamondsService {
     console.log(res.data);
     AppState.diamonds = res.data.Diamonds;
     AppState.totalNumber = res.data.TotalNumberOfDiamonds;
+    AppState.buildWheel = true;
     AppState.displayPage = 1;
     AppState.loaded = true
     if (AppState.currentPage !== 1) {

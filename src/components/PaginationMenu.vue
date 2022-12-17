@@ -7,18 +7,18 @@
   <!-- the transition tag will slide-left or slide-right depending on this direction -->
   <div class="section__pagination">
     <div class="space-0">
-      <button @click="showPage(state.foreList[2])">
-        ${state.foreList[2]}$
+      <button @click="showPage(state.pageList[0])">
+        ${state.pageList[0]}$
       </button>
     </div>
     <div class="space-1">
-      <button @click="showPage(state.foreList[1])">
-        ${state.foreList[1]}$
+      <button @click="showPage(state.pageList[1])">
+        ${state.pageList[1]}$
       </button>
     </div>
     <div class="space-2">
-      <button @click="showPage(state.foreList[0])">
-        ${state.foreList[0]}$
+      <button @click="showPage(state.pageList[2])">
+        ${state.pageList[2]}$
       </button>
     </div>
     <div id="cut-diamond">
@@ -29,26 +29,26 @@
           <input
             type="number"
             class="current-page"
-            v-model="state.localPage"
-            @submit.prevent="showPage(state.localPage)"
+            v-model="state.pageList[3]"
+            @submit.prevent="showPage(state.pageList[3])"
           />
           <div class="underline"></div>
         </div>
       </div>
     </div>
     <div class="space-3">
-      <button @click="showPage(state.afterList[0])">
-        ${state.afterList[0]}$
+      <button @click="showPage(state.pageList[4])">
+        ${state.pageList[4]}$
       </button>
     </div>
     <div class="space-4">
-      <button @click="showPage(state.afterList[1])">
-        ${state.afterList[1]}$
+      <button @click="showPage(state.pageList[5])">
+        ${state.pageList[5]}$
       </button>
     </div>
     <div class="space-5">
-      <button @click="showPage(state.afterList[2])">
-        ${state.afterList[2]}$
+      <button @click="showPage(state.pageList[6])">
+        ${state.pageList[6]}$
       </button>
     </div>
     <div class="pagination-menu"></div>
@@ -57,7 +57,7 @@
 
 
 <script>
-import { computed, onMounted, reactive, ref, watchEffect } from "vue";
+import { computed, reactive, watchEffect } from "vue";
 import { AppState } from "../services/AppState";
 import { diamondsService } from "../services/DiamondsService";
 export default {
@@ -70,134 +70,108 @@ export default {
 
   setup(props) {
     const state = reactive({
-      foreList: [],
-      afterList: [],
-      ogArrays: [],
+      pageList: [],
       localPage: 1,
     });
     const lastPage = computed(() => {
       return Math.ceil(AppState.totalNumber / props.showX);
     });
 
-    // the reactive code to change the pages displayed
-    //   let list = [];
-    //   if (
-    //     AppState.displayPage >= 3 &&
-    //     AppState.displayPage <= lastPage.value - 2
-    //   ) {
-    //     list[0] = 1;
-    //     list[1] = AppState.displayPage - 2;
-    //     list[2] = AppState.displayPage - 1;
-    //     list[3] = AppState.displayPage;
-    //     list[4] = AppState.displayPage + 1;
-    //     list[5] = AppState.displayPage + 2;
-    //     list[6] = lastPage.value;
-    //   } else {
-    //     list[0] = AppState.displayPage;
-    //     list[1] = 2;
-    //     list[2] = 3;
-    //     list[3] = 4;
-    //     list[4] = 5;
-    //     list[5] = 6;
-    //     list[6] = lastPage.value;
-    //   }
-
-    //   return list;
-    // });
-    watchEffect(() => {
-      if (AppState.displayPage == 1) {
-        handleWheel();
-      }
-    });
-
-    function buildWheel(origin) {
-      if (origin == "start") {
-        let arr1 = Array.from(Array(3)).map((e, i) => {
+    function buildWheel() {
+      let arr1 = Array.from(Array(3))
+        .map((e, i) => {
           e = lastPage.value - i;
           return e;
-        });
-        let arr2 = Array.from(Array(3)).map((e, i) => {
-          e = state.localPage + 1 + i;
-          return e;
-        });
-        state.ogArrays = [arr1, arr2];
-        state.foreList = arr1;
-        state.afterList = arr2;
-        console.log(state.foreList, state.afterList);
-      }
-      if (origin == "end") {
-        let arr1 = state.ogArrays[0].map((x) => x - 1);
-        let arr2 = state.ogArrays[1].map((x) => x - 1);
-        state.foreList = arr1;
-        state.afterList = arr2;
-      }
+        })
+        .reverse();
+      let arr2 = Array.from(Array(4)).map((e, i) => {
+        e = state.localPage + i;
+        return e;
+      });
+      state.pageList = arr1.concat(arr2);
+      animateCenter();
     }
 
     function handleWheel(pageNum) {
-      console.log(state.localPage);
-      if (state.localPage == 1) {
-        buildWheel("start");
-      } else if (state.localPage == lastPage.value) {
-        console.log("go end");
-        buildWheel("end");
-      } else {
-        let paginateDirection =
-          pageNum == lastPage.value || pageNum < AppState.displayPage
-            ? "prev"
-            : "next";
-
-        let movedPages = Array.from(
-          Array(Math.abs(pageNum - AppState.displayPage))
-        ).map((e, i) => {
-          e =
-            paginateDirection == "next"
-              ? AppState.displayPage + i
-              : AppState.displayPage - i;
-          return e;
-        });
-
-        console.log(movedPages);
-
-        if (paginateDirection == "next") {
-          state.afterList = state.afterList.map((e) => {
-            if (e + movedPages.length > lastPage.value) {
-              return 1 + movedPages.length;
-            } else {
-              return e + movedPages.length;
-            }
-          });
-          state.foreList = state.foreList.map((_, i, a) => {
-            if (a[i - 1] == undefined) {
-              let newVal = movedPages[movedPages.length - i - 1];
-              return newVal;
-            } else {
-              return a[i - 1];
-            }
-          });
-        }
-        if (paginateDirection == "prev") {
-          state.foreList = state.foreList.map((e) => {
-            if (e - movedPages.length < 1) {
-              return lastPage.value - movedPages.length;
-            } else {
-              return e - movedPages.length;
-            }
-          });
-          state.afterList = state.afterList.map((_, i, a) => {
-            if (a[i - 1] == undefined) {
-              let newVal = movedPages[movedPages.length - i - 1];
-              return newVal;
-            } else {
-              return a[i - 1];
-            }
-          });
-        }
+      function pagesToMove(pageNum, arr) {
+        let index = arr.indexOf(pageNum);
+        let numberToPaginate = arr.slice(3, index).length;
+        let valueForMapping = arr[arr.length - 1];
+        return [numberToPaginate, valueForMapping];
       }
+
+      function shiftIndecesByX(arr, shiftAmount) {
+        return arr.map((_, i, a) => a[(i + shiftAmount) % a.length]);
+      }
+
+      function addOnPages(startPoint, totalAdditions, direction) {
+        return Array.from(Array(totalAdditions)).map((e, i) => {
+          let output =
+            direction == "prev" ? startPoint - i - 1 : startPoint + i + 1;
+          if (output > lastPage.value && direction == "next") {
+            output = 1;
+          } else if (output < 1 && direction == "prev") {
+            output = lastPage.value;
+          }
+          return output;
+        });
+      }
+
+      let pageList = [...state.pageList];
+
+      let paginateDirection = pageList.slice(0, 3).includes(pageNum)
+        ? "prev"
+        : "next";
+
+      pageList = paginateDirection == "prev" ? pageList.reverse() : pageList;
+
+      const movedPages = pagesToMove(pageNum, ...[pageList]);
+
+      pageList = shiftIndecesByX(pageList, movedPages[0]);
+
+      let arr = addOnPages(movedPages[1], movedPages[0], paginateDirection);
+
+      pageList.splice(pageList.length - movedPages[0], movedPages[0], ...arr);
+      pageList = paginateDirection == "prev" ? pageList.reverse() : pageList;
+
+      state.pageList = pageList;
+      animateCenter();
     }
 
+    function animateCenter() {
+      const underlineSlash = [
+        { transform: "scaleX(0)" },
+        { transform: "scaleX(1)" },
+      ];
+
+      const underlineTiming = {
+        fill: "forwards",
+        duration: 100,
+        easing: "linear",
+      };
+
+      const centerPop = [
+        { transform: "translateY(100%)" },
+        { transform: "translateY(0)" },
+      ];
+      const centerTiming = {
+        duration: 400,
+        delay: 100,
+        fill: "backwards",
+        iterations: 1,
+        easing: "cubic-bezier(0.6, 0.14, 0.9, 0.55)",
+      };
+
+      const underline = document.querySelector(".underline");
+      const center = document.querySelector(".current-page");
+      underline.animate(underlineSlash, underlineTiming);
+      center.animate(centerPop, centerTiming);
+    }
     // TODO handleRequests Timer? what happens when we break this thing.
+
     // logic to determine when to make requests for new pages
     async function showPage(pageNum) {
+      // animateRing(){}
       pageNum = parseInt(pageNum);
       state.localPage = pageNum;
       let currentPage = Math.ceil((AppState.displayPage * props.showX) / 200);
@@ -206,30 +180,38 @@ export default {
       handleWheel(pageNum);
 
       AppState.currentPage = desiredPage;
-      AppState.displayPage = state.localPage;
+      AppState.displayPage = pageNum;
 
-      // if (desiredPage !== currentPage) {
-      //   if (Math.abs(desiredPage - currentPage) >= 2) {
-      //     AppState.prevPageDiamonds = [];
-      //     AppState.nextPageDiamonds = [];
-      //     await diamondsService.getDiamondsByQuery();
-      //   } else {
-      //     if (desiredPage > currentPage) {
-      //       AppState.prevPageDiamonds = AppState.diamonds;
-      //       AppState.diamonds = AppState.nextPageDiamonds;
-      //       await diamondsService.getNextPage();
-      //     } else {
-      //       AppState.nextPageDiamonds = AppState.diamonds;
-      //       AppState.diamonds = AppState.prevPageDiamonds;
-      //       await diamondsService.getPrevPage();
-      //     }
-      //   }
-      // }
+      if (desiredPage !== currentPage) {
+        if (Math.abs(desiredPage - currentPage) >= 2) {
+          AppState.prevPageDiamonds = [];
+          AppState.nextPageDiamonds = [];
+          await diamondsService.getDiamondsByQuery();
+        } else {
+          if (desiredPage > currentPage) {
+            AppState.prevPageDiamonds = AppState.diamonds;
+            AppState.diamonds = AppState.nextPageDiamonds;
+            await diamondsService.getNextPage();
+          } else {
+            AppState.nextPageDiamonds = AppState.diamonds;
+            AppState.diamonds = AppState.prevPageDiamonds;
+            await diamondsService.getPrevPage();
+          }
+        }
+      }
     }
+
+    watchEffect(() => {
+      if (AppState.buildWheel) {
+        AppState.buildWheel = false;
+        buildWheel();
+      }
+    });
 
     return {
       state,
       lastPage,
+      loaded: computed(() => AppState.loaded),
       showPage,
     };
   },
@@ -238,6 +220,16 @@ export default {
 
 
 <style lang="scss" scoped>
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateY(-50px);
+}
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 2s ease-out;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -250,9 +242,6 @@ input[type="number"] {
 .section__pagination {
   display: flex;
   justify-content: end;
-}
-
-.pagination-menu {
 }
 
 #cut-diamond {
@@ -312,11 +301,12 @@ input[type="number"] {
 .page-display {
   position: absolute;
   top: 12px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .current-page {
-  display: flex;
-  justify-content: center;
   z-index: 3;
   width: 30px;
   background-color: transparent !important;
@@ -326,16 +316,6 @@ input[type="number"] {
 }
 
 .underline {
-  position: relative;
-  color: black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.underline::after {
-  content: "";
   position: absolute;
   background-color: black;
   border-radius: 2px;
@@ -345,18 +325,14 @@ input[type="number"] {
   bottom: 0;
   z-index: 4;
   transform: scaleX(0);
-  transition: transform 0.1s linear;
   transform-origin: bottom left;
 }
 
-.grow {
-}
-
-.grow:hover {
-  .underline::after {
-    transform: scaleX(1);
-  }
-}
+// .grow:hover {
+//   .underline::after {
+//     transform: scaleX(1);
+//   }
+// }
 
 .current-page:focus-visible {
   outline: transparent none 0px !important;

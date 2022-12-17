@@ -10,6 +10,7 @@ export const AppState = reactive({
 
   filterValues: JSON.parse(JSON.stringify(TemplateData.filterLabels)),
 
+  buildWheel: false,
   totalNumber: 0,
   currentPage: 1,
   displayPage: 0,

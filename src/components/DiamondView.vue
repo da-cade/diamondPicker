@@ -27,7 +27,7 @@
       >
     </div>
     <div v-if="!loaded" class="loader">Loading</div>
-    <div v-else class="section__index">
+    <div v-else class="section__index" v-show="false">
       <table class="table">
         <thead>
           <tr class="">
