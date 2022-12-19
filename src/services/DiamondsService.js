@@ -65,6 +65,7 @@ class DiamondsService {
     AppState.parameters = this.formatData()
     // const res = await api.post("/apps/api/diamonds", query);
     let res = await this.sendRequest()
+    console.log(res.data)
     AppState.diamonds = res.data.Diamonds;
     AppState.totalNumber = res.data.TotalNumberOfDiamonds;
     AppState.displayPage = 1;

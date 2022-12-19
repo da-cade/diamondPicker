@@ -12,3 +12,8 @@ import { AppState } from "../services/AppState";
 // PriceRange = [], SizeRange = [], Cut = [], Color = [], Clarity = [], Polish = [], Symmetry = [], Fluorescence = [], LengthToWidthRatio = [], DepthPercent = [], TablePercent = [], Shape = []
 // this.PriceRange = PriceRange, this.SizeRange = SizeRange, this.Cut = Cut, this.Color = Color, this.Clarity = Clarity, this.Polish = Polish, this.Symmetry = Symmetry, this.Fluorescence = Fluorescence, this.LengthToWidthRatio = LengthToWidthRatio, this.DepthPercent = , this.TablePercent = , this.Shape = 
 
+new class DiamondExport {
+  constructor() {
+
+  }
+}

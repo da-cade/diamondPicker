@@ -5,6 +5,7 @@ export const AppState = reactive({
   diamonds: [],
   nextPageDiamonds: [],
   displayDiamonds: [],
+  showModal: false,
 
   parameters: {},
 

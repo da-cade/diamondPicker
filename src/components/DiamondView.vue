@@ -35,10 +35,10 @@
               <button @click="sortItems('Shape')">shape <i></i></button>
             </th>
             <th scope="col">
-              <button @click="sortItems('CaratWeight')">carat <i></i></button>
+              <button @click="sortItems('Size')">carat <i></i></button>
             </th>
             <th scope="col">
-              <button @click="sortItems('Make')">cut <i></i></button>
+              <button @click="sortItems('Cut')">cut <i></i></button>
             </th>
             <th scope="col">
               <button @click="sortItems('Color')">color <i></i></button>
@@ -55,15 +55,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="di in displayDiamonds" :key="di.SerialNumber">
+          <tr
+            v-for="di in displayDiamonds"
+            :key="di.SerialNumber"
+            @click="popModal(di.SerialNumber)"
+          >
             <th scope="col">
               ${di.Shape == 'SQUARE' ? 'Princess' : di.Shape}$
             </th>
-            <th scope="col">${di.CaratWeight}$</th>
-            <th scope="col">${di.Make}$</th>
+            <th scope="col">${di.Size}$</th>
+            <th scope="col">${di.Cut}$</th>
             <th scope="col">${di.Color}$</th>
             <th scope="col">${di.Clarity}$</th>
-            <th scope="col">${di.Price.Value}$</th>
+            <th scope="col">${di.Price}$</th>
             <th scope="col">${di.Certification}$</th>
           </tr>
         </tbody>
@@ -75,10 +79,9 @@
     </div>
   </div>
 
-  <div class="modal">
-    <slot></slot>
-    <slot></slot>
-  </div>
+  <Transition name="modalFade">
+    <details-modal :diamond="state.diamondDetails" v-if="showModal" />
+  </Transition>
 </template>
 
 
@@ -88,24 +91,24 @@ import { watchEffect } from "vue";
 import { AppState } from "../services/AppState";
 import SideDetails from "./SideDetails.vue";
 import PaginationMenu from "./PaginationMenu.vue";
+import DetailsModal from "./DetailsModal.vue";
 export default {
-  components: { SideDetails, PaginationMenu },
+  components: { SideDetails, PaginationMenu, DetailsModal },
   setup() {
     const state = reactive({
       showX: 20,
-      showModal: false,
       sortBy: "",
       sortReverse: false,
-      timeoutID: undefined,
+      diamondDetails: {},
     });
 
     // TODO implement logic for changing filters, handling timer etc. this could potentially just be a watchEffect for filters.
-    watchEffect(async () => {
-      // if (AppState.sendRequest) {
-      // AppState.sendRequest = false;
-      // await diamondsService.getDiamondsByQuery();
-      // }
-    });
+    // watchEffect(async () => {
+    // if (AppState.sendRequest) {
+    // AppState.sendRequest = false;
+    // await diamondsService.getDiamondsByQuery();
+    // }
+    // });
 
     // Logic which determines the number of pages that can be displayed without another request, and logic which determines the portion of the state data to display based on the viewer's selected page.
     watchEffect(() => {
@@ -125,6 +128,26 @@ export default {
         );
       }
     });
+
+    function popModal(serialNumber) {
+      const diamond = AppState.diamonds.slice().find((d) => {
+        return d.SerialNumber == serialNumber;
+      });
+      if (state.diamondDetails == diamond) {
+        AppState.showModal = true;
+      } else {
+        diamond.Price = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: diamond.CurrencyCode,
+        }).format(diamond.Price);
+        state.diamondDetails = diamond;
+      }
+      AppState.showModal = true;
+
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+    }
 
     function sortItems(sortValue) {
       if (AppState.diamonds.length) {
@@ -162,9 +185,10 @@ export default {
     return {
       state,
       displayDiamonds: computed(() => AppState.displayDiamonds),
-      // loaded: computed(() => AppState.loaded),
-      loaded: true,
+      loaded: computed(() => AppState.loaded),
+      showModal: computed(() => AppState.showModal),
       sortItems,
+      popModal,
     };
   },
 };
@@ -172,6 +196,16 @@ export default {
 
 
 <style lang="scss" scoped>
+.modalFade-enter-active,
+.modalFade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.modalFade-enter-from,
+.modalFade-leave-to {
+  opacity: 0;
+}
+
 .loader {
   display: flex;
   align-items: center;
