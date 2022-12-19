@@ -27,7 +27,7 @@
       >
     </div>
     <div v-if="!loaded" class="loader">Loading</div>
-    <div v-else class="section__index" v-show="false">
+    <div v-else class="section__index">
       <table class="table">
         <thead>
           <tr class="">
@@ -74,6 +74,11 @@
       <side-details />
     </div>
   </div>
+
+  <div class="modal">
+    <slot></slot>
+    <slot></slot>
+  </div>
 </template>
 
 
@@ -87,7 +92,8 @@ export default {
   components: { SideDetails, PaginationMenu },
   setup() {
     const state = reactive({
-      showX: 50,
+      showX: 20,
+      showModal: false,
       sortBy: "",
       sortReverse: false,
       timeoutID: undefined,
