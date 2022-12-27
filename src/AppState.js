@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { TemplateData } from "../assets/TemplateData";
+import { TemplateData } from "./assets/TemplateData";
 export const AppState = reactive({
   prevPageDiamonds: [],
   diamonds: [],

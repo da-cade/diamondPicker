@@ -27,7 +27,7 @@
 import { reactive } from "vue";
 import { computed } from "vue";
 import { TemplateData } from "../assets/TemplateData";
-import { AppState } from "../services/AppState";
+import { AppState } from "../AppState";
 export default {
   setup() {
     const state = reactive({

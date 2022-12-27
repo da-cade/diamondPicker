@@ -49,7 +49,7 @@
 
 <script>
 import { computed, onMounted, ref } from "vue";
-import { AppState } from "../services/AppState";
+import { AppState } from "../AppState";
 export default {
   props: {
     diamond: {

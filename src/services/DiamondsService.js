@@ -1,4 +1,4 @@
-import { AppState } from "./AppState.js"
+import { AppState } from "../AppState.js"
 import { api } from "./AxiosService.js"
 
 // const Timer = {
@@ -72,14 +72,10 @@ class DiamondsService {
     AppState.loaded = true;
 
     if (AppState.currentPage !== 1) {
-      if (!AppState.prevPageDiamonds.length) {
-        await this.getPrevPage()
-      }
+      await this.getPrevPage()
     }
     if (AppState.currentPage !== Math.ceil(res.data.TotalNumberOfDiamonds / 200)) {
-      if (!AppState.nextPageDiamonds.length) {
-        await this.getNextPage()
-      }
+      await this.getNextPage()
     }
 
   }

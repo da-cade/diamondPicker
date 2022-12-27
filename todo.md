@@ -20,7 +20,7 @@ Components -
 
 NEXT PHASE to-do
 
-[] SideDetails Component
+[] SideDetails Component?
 [] Properly configure server
 [] Build responsible error handling both sides
 [] Build front end diamondexport model

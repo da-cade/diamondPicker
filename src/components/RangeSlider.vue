@@ -98,7 +98,7 @@
 
 <script>
 import { computed, onMounted, reactive, watch } from "vue";
-import { AppState } from "../services/AppState";
+import { AppState } from "../AppState";
 import { TemplateData } from "../assets/TemplateData";
 export default {
   emits: ["updateRange"],

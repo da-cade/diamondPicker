@@ -88,7 +88,7 @@
 <script>
 import { computed, reactive } from "vue";
 import { watchEffect } from "vue";
-import { AppState } from "../services/AppState";
+import { AppState } from "../AppState";
 import SideDetails from "./SideDetails.vue";
 import PaginationMenu from "./PaginationMenu.vue";
 import DetailsModal from "./DetailsModal.vue";
@@ -117,10 +117,14 @@ export default {
           AppState.diamonds.length / state.showX
         );
 
+        console.log("Pages available", availableDisplayPages);
+
         AppState.workingSection =
           AppState.displayPage % availableDisplayPages !== 0
             ? AppState.displayPage % availableDisplayPages
             : availableDisplayPages;
+
+        console.log("workingsection", AppState.workingSection);
 
         AppState.displayDiamonds = AppState.diamonds.slice(
           state.showX * (AppState.workingSection - 1),

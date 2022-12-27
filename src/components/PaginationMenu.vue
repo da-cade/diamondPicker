@@ -99,7 +99,7 @@
 
 <script>
 import { computed, reactive, watchEffect } from "vue";
-import { AppState } from "../services/AppState";
+import { AppState } from "../AppState";
 import { diamondsService } from "../services/DiamondsService";
 export default {
   props: {
@@ -249,7 +249,16 @@ export default {
       handleWheel(pageNum);
 
       AppState.currentPage = desiredPage;
+      console.log(
+        "desiredPage:",
+        desiredPage,
+        "currentPage:",
+        currentPage,
+        "Appstate displayPage before setting:",
+        AppState.displayPage
+      );
       AppState.displayPage = pageNum;
+      console.log("Appstate displayPage after setting:", AppState.displayPage);
 
       if (desiredPage !== currentPage) {
         if (Math.abs(desiredPage - currentPage) >= 2) {
