@@ -45,8 +45,8 @@ export default {
         "Asscher",
       ],
     });
+
     function updateShapes(shapeItem) {
-      AppState.loaded = false;
       let index = state.Shape;
       if (!index.includes(shapeItem)) {
         index.push(shapeItem);
@@ -54,8 +54,8 @@ export default {
         index = index.filter((s) => s !== shapeItem);
       }
       state.Shape = index;
-      console.log(shapeItem, index);
-      // handleTimer.setup("Shape");
+      AppState.shapes = index;
+      AppState.makeRequest = true;
     }
     return { state, updateShapes, shapes: computed(() => TemplateData.Shape) };
   },

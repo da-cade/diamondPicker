@@ -179,8 +179,7 @@ export default {
         reactiveIndex.values = [+reactiveIndex.fromVal, +reactiveIndex.toVal];
       }
       console.log(AppState.filterValues[filter].values);
-      AppState.sendRequest = true;
-      // TODO trigger the watcheffect in the container
+      AppState.makeRequest = true;
     }
 
     return {

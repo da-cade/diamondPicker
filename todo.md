@@ -20,10 +20,10 @@ Components -
 
 NEXT PHASE to-do
 
-[] SideDetails Component?
+[x] SideDetails Component? nope
 [] Properly configure server
 [] Build responsible error handling both sides
-[] Build front end diamondexport model
+[] Build front end diamondexport model (maybe)
 [] Configure breakpoints -- Figma **** important
 [] Check theme classes
 

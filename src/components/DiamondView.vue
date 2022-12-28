@@ -92,6 +92,7 @@ import { AppState } from "../AppState";
 import SideDetails from "./SideDetails.vue";
 import PaginationMenu from "./PaginationMenu.vue";
 import DetailsModal from "./DetailsModal.vue";
+import { diamondsService } from "../services/DiamondsService";
 export default {
   components: { SideDetails, PaginationMenu, DetailsModal },
   setup() {
@@ -102,13 +103,20 @@ export default {
       diamondDetails: {},
     });
 
-    // TODO implement logic for changing filters, handling timer etc. this could potentially just be a watchEffect for filters.
-    // watchEffect(async () => {
-    // if (AppState.sendRequest) {
-    // AppState.sendRequest = false;
-    // await diamondsService.getDiamondsByQuery();
-    // }
-    // });
+    watchEffect(() => {
+      if (AppState.makeRequest) {
+        AppState.makeRequest = false;
+        if (AppState.timeoutID) {
+          clearTimeout(AppState.timeoutID);
+          AppState.timeoutID = undefined;
+        }
+        AppState.timeoutID = setTimeout(async () => {
+          AppState.timeoutID = undefined;
+          console.log("sending");
+          await diamondsService.getDiamondsByQuery();
+        }, 1000);
+      }
+    });
 
     // Logic which determines the number of pages that can be displayed without another request, and logic which determines the portion of the state data to display based on the viewer's selected page.
     watchEffect(() => {
@@ -117,14 +125,10 @@ export default {
           AppState.diamonds.length / state.showX
         );
 
-        console.log("Pages available", availableDisplayPages);
-
         AppState.workingSection =
           AppState.displayPage % availableDisplayPages !== 0
             ? AppState.displayPage % availableDisplayPages
             : availableDisplayPages;
-
-        console.log("workingsection", AppState.workingSection);
 
         AppState.displayDiamonds = AppState.diamonds.slice(
           state.showX * (AppState.workingSection - 1),

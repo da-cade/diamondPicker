@@ -5,6 +5,7 @@ export const AppState = reactive({
   diamonds: [],
   nextPageDiamonds: [],
   displayDiamonds: [],
+  shapes: [],
   showModal: false,
 
   parameters: {},
@@ -14,10 +15,10 @@ export const AppState = reactive({
   buildWheel: false,
   totalNumber: 0,
   currentPage: 1,
-  displayPage: 0,
+  displayPage: 1,
   workingSection: 1,
 
-  sendRequest: false,
+  makeRequest: false,
   timeoutID: undefined,
   loaded: false,
 });
