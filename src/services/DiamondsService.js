@@ -19,12 +19,12 @@ class DiamondsService {
   }
   async sendRequest(req) {
     let res = await api.post("/diamonds", req);
+    // let res = await api.post("/apps/api/diamonds", req);
     return res;
   }
   async getDiamondsByQuery() {
     AppState.loaded = false;
     AppState.parameters = this.formatData()
-    // const res = await api.post("/apps/api/diamonds", query);
     let res = await this.sendRequest(AppState.parameters)
     console.log(res.data)
     AppState.diamonds = res.data.Diamonds;
@@ -44,14 +44,12 @@ class DiamondsService {
     let body = JSON.parse(JSON.stringify(AppState.parameters))
     body.Page += 1
     let res = await this.sendRequest(body)
-    console.log("next", res.data)
     AppState.nextPageDiamonds = res.data.Diamonds;
   }
   async getPrevPage() {
     let body = JSON.parse(JSON.stringify(AppState.parameters))
     body.Page -= 1
     let res = await this.sendRequest(body)
-    console.log("pre", res.data)
     AppState.prevPageDiamonds = res.data.Diamonds;
   }
 }

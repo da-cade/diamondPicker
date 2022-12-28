@@ -6,6 +6,7 @@
       :class="state.Shape.includes(shape) ? 'checked' : 'unchecked'"
       class="gem-input"
     >
+      <!-- NOTE bs5 (checkbox)-->
       <input
         :checked="state.Shape.includes(shape)"
         @change="updateShapes(shape)"
@@ -71,7 +72,8 @@ $accent-color: rgb(255, 201, 201);
 
 .gem-buttons {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
 }
 
@@ -86,12 +88,14 @@ $accent-color: rgb(255, 201, 201);
   border: 1px solid black;
   position: relative;
   height: fit-content;
-  flex-grow: 1;
+  // flex-grow: 1;
   z-index: 0;
   transition: transform 150ms ease;
+  // width: calc(var(--font-heading-scale) * 1.5rem);
+  width: 3.5rem;
   i,
   input {
-    font-size: $icon-size;
+    font-size: calc(var(--font-heading-scale) * 1.5rem);
     background-color: transparent;
     z-index: 2;
     pointer-events: auto;

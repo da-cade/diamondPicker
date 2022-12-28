@@ -1,11 +1,14 @@
 <template>
-  <div class="index__content container-fluid" style="width: 100%">
+  <div class="index__content" style="width: 100%">
     <div class="section__filters row">
-      <div class="col-6"><h1>The Portsche's Diamond Index</h1></div>
-      <div class="col-6 mb-3">
+      <div class="diamondTitle col-12 col-md-6 col-lg-3 p-3">
+        <h1>The Portsche's Diamond Index</h1>
+      </div>
+      <div class="shapes col-12 col-md-6 col-lg-9 mb-3">
         <shape-filter />
       </div>
     </div>
+
     <div class="section__filters row">
       <div
         class="col-6 mb-5"
@@ -41,4 +44,9 @@ export default {
 
 
 <style lang="scss" scoped>
+.shapes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="filter.labels" class="range_container">
+  <div v-if="filter.labels" class="range_container p-3">
     <div class="sliders_control filter-item">
       <label for="fromSlider">${filter.handle}$</label>
       <input
@@ -36,7 +36,7 @@
       </datalist>
     </div>
   </div>
-  <div v-else class="range_container">
+  <div v-else class="range_container p-3">
     <div class="sliders_control filter-item">
       <label for="fromSlider">${filter.handle}$</label>
       <input

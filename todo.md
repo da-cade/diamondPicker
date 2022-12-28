@@ -23,11 +23,15 @@ NEXT PHASE to-do
 [x] SideDetails Component? nope
 [] Properly configure server
 [] Build responsible error handling both sides
-[] Build front end diamondexport model (maybe)
+[x] Build front end diamondexport model (maybe)
 [] Configure breakpoints -- Figma **** important
-[] Check theme classes
+[x] Check theme classes
+[] Try-Catches
+[] Replace BS5
+[] Fix sorter logic
 
 MORE
 [] Rotating dial range input (create array, bind to it, and model the value +/- distance?)
-[] Test on Shopify
+[x] Test on Shopify
+[] Test more
 [] Set up own diamond-icons... can't steal Punchmark's

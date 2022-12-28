@@ -2,8 +2,9 @@
   <div class="custom-accordion" id="accordionExample">
     <div class="">
       <h2 class="accordion-heading">
-        <button @click="isExpanded = !isExpanded">Advanced Filters</button>
-
+        <button class="button" @click="isExpanded = !isExpanded">
+          Advanced Filters
+        </button>
         <svg
           class="header-icon"
           :class="{ rotate: isExpanded }"
@@ -29,6 +30,7 @@
       @leave="leave"
     >
       <div class="accordion-item-details row" v-show="isExpanded">
+        <!-- NOTE bs5 -->
         <div
           class="col-6 mb-5"
           v-for="filter in secondLabelSet"

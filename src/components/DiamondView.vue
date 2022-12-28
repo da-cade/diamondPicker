@@ -1,7 +1,9 @@
 <template>
+  <!-- NOTE bs5 -->
   <div class="section__body container-fluid mt-5">
+    <!-- NOTE bs5 -->
     <div class="section__showX">
-      <span
+      <!-- <span
         >Showing
         <button
           class="dropdown-toggle"
@@ -11,46 +13,81 @@
           aria-expanded="false"
         >
           ${state.showX}$
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="showMoreDropdown">
-          <li>
-            <a class="dropdown-item" @click="state.showX = 20" href="#">20</a>
-          </li>
-          <li>
-            <a class="dropdown-item" @click="state.showX = 50" href="#">50</a>
-          </li>
-          <li>
-            <a class="dropdown-item" @click="state.showX = 100" href="#">100</a>
-          </li>
-        </ul>
-        per page.</span
-      >
+        </button> -->
+      <div class="product__accordion accordion">
+        <details>
+          <summary>
+            <div class="summary__title">
+              <h2 class="h4 accordion__title">Showing ${state.showX}$</h2>
+              <!-- <svg
+                class="header-icon"
+                :class="{ rotate: isExpanded }"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg> -->
+            </div>
+          </summary>
+          <div class="accordion__content rte">
+            <ul class="dropdown-menu" aria-labelledby="showMoreDropdown">
+              <li>
+                <a class="dropdown-item" @click="state.showX = 20" href="#"
+                  >20</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" @click="state.showX = 50" href="#"
+                  >50</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" @click="state.showX = 100" href="#"
+                  >100</a
+                >
+              </li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+      <!-- per page.</span -->
+      <!-- > -->
     </div>
     <div v-if="!loaded" class="loader">Loading</div>
     <div v-else class="section__index">
+      <!-- NOTE table qualities adjusted -->
       <table class="table">
         <thead>
           <tr class="">
-            <th scope="col">
-              <button @click="sortItems('Shape')">shape <i></i></button>
+            <!-- NOTE bs5 -->
+            <th class="sortButton" @click="sortItems('Shape')" scope="col">
+              <span>Shape <i></i></span>
             </th>
-            <th scope="col">
-              <button @click="sortItems('Size')">carat <i></i></button>
+            <th scope="col" class="sortButton" @click="sortItems('Size')">
+              <span>Carat <i></i></span>
             </th>
-            <th scope="col">
-              <button @click="sortItems('Cut')">cut <i></i></button>
+            <th scope="col" class="sortButton" @click="sortItems('Cut')">
+              <span>Cut <i></i></span>
             </th>
-            <th scope="col">
-              <button @click="sortItems('Color')">color <i></i></button>
+            <th scope="col" class="sortButton" @click="sortItems('Color')">
+              <span>Color <i></i></span>
             </th>
-            <th scope="col">
-              <button @click="sortItems('Clarity')">clarity <i></i></button>
+            <th scope="col" class="sortButton" @click="sortItems('Clarity')">
+              <span>Clarity <i></i></span>
             </th>
-            <th scope="col">
-              <button @click="sortItems('Price')">price <i></i></button>
+            <th scope="col" class="sortButton" @click="sortItems('Price')">
+              <span>Price <i></i></span>
             </th>
-            <th scope="col">
-              <button @click="sortItems('Lab')">lab <i></i></button>
+            <th scope="col" class="sortButton" @click="sortItems('Lab')">
+              <span>Lab <i></i></span>
             </th>
           </tr>
         </thead>
@@ -60,6 +97,7 @@
             :key="di.SerialNumber"
             @click="popModal(di.SerialNumber)"
           >
+            <!-- NOTE bs5 -->
             <th scope="col">
               ${di.Shape == 'SQUARE' ? 'Princess' : di.Shape}$
             </th>
@@ -200,6 +238,8 @@ export default {
 
 
 <style lang="scss" scoped>
+$bg-light: white;
+
 .modalFade-enter-active,
 .modalFade-leave-active {
   transition: opacity 0.5s ease;
@@ -208,6 +248,24 @@ export default {
 .modalFade-enter-from,
 .modalFade-leave-to {
   opacity: 0;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  text-align: start;
+}
+
+.sortButton {
+  background-color: $bg-light;
+}
+
+.sortButton:hover,
+tbody > tr:hover {
+  cursor: pointer;
+  background: darken($bg-light, 10);
 }
 
 .loader {
