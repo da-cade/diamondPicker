@@ -47,7 +47,7 @@ export default {
     });
 
     function updateShapes(shapeItem) {
-      let index = state.Shape;
+      let index = [...state.Shape];
       if (!index.includes(shapeItem)) {
         index.push(shapeItem);
       } else {

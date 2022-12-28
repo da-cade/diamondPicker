@@ -74,9 +74,6 @@
       </table>
     </div>
     <pagination-menu :showX="state.showX" />
-    <div class="side-details">
-      <side-details />
-    </div>
   </div>
 
   <Transition name="modalFade">
@@ -89,12 +86,11 @@
 import { computed, reactive } from "vue";
 import { watchEffect } from "vue";
 import { AppState } from "../AppState";
-import SideDetails from "./SideDetails.vue";
 import PaginationMenu from "./PaginationMenu.vue";
 import DetailsModal from "./DetailsModal.vue";
 import { diamondsService } from "../services/DiamondsService";
 export default {
-  components: { SideDetails, PaginationMenu, DetailsModal },
+  components: { PaginationMenu, DetailsModal },
   setup() {
     const state = reactive({
       showX: 20,

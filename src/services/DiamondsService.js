@@ -10,7 +10,7 @@ class DiamondsService {
         formData[key] = filterData[key].values;
       }
       formData["Page"] = AppState.currentPage;
-      formData["Shape"] = AppState.shapes;
+      // formData["Shape"] = AppState.shapes;
       console.log(formData)
       return formData;
     } catch (error) {
@@ -19,7 +19,7 @@ class DiamondsService {
   }
   async sendRequest(req) {
     let res = await api.post("/diamonds", req);
-    return res
+    return res;
   }
   async getDiamondsByQuery() {
     AppState.loaded = false;
@@ -41,18 +41,18 @@ class DiamondsService {
   }
 
   async getNextPage() {
-    let body = { ...AppState.parameters }
+    let body = JSON.parse(JSON.stringify(AppState.parameters))
     body.Page += 1
     let res = await this.sendRequest(body)
-    AppState.nextPageDiamonds = res.data.Diamonds;
     console.log("next", res.data)
+    AppState.nextPageDiamonds = res.data.Diamonds;
   }
   async getPrevPage() {
-    let body = { ...AppState.parameters }
+    let body = JSON.parse(JSON.stringify(AppState.parameters))
     body.Page -= 1
     let res = await this.sendRequest(body)
-    AppState.prevPageDiamonds = res.data.Diamonds;
     console.log("pre", res.data)
+    AppState.prevPageDiamonds = res.data.Diamonds;
   }
 }
 
