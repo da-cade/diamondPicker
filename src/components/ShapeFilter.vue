@@ -75,6 +75,7 @@ $accent-color: rgb(255, 201, 201);
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .gem-input {
@@ -88,14 +89,14 @@ $accent-color: rgb(255, 201, 201);
   border: 1px solid black;
   position: relative;
   height: fit-content;
-  // flex-grow: 1;
   z-index: 0;
   transition: transform 150ms ease;
-  // width: calc(var(--font-heading-scale) * 1.5rem);
-  width: 3.5rem;
+  width: calc(var(--font-heading-scale) * 4em);
+  // width: 5rem;
   i,
   input {
-    font-size: calc(var(--font-heading-scale) * 1.5rem);
+    font-size: calc(var(--font-heading-scale) * 3em);
+    // font-size: 3rem;
     background-color: transparent;
     z-index: 2;
     pointer-events: auto;
@@ -106,7 +107,7 @@ $accent-color: rgb(255, 201, 201);
     z-index: -1;
   }
   i {
-    transition: transform 150ms ease;
+    transition: transform 50ms linear;
     transform: scale(1);
     color: black;
     z-index: -1;

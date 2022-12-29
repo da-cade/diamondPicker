@@ -6,7 +6,6 @@
           <h2>Diamond #${diamond.SerialNumber}$</h2>
           <div class="modalTitle">
             <h2>${diamond.Shape}$, ${diamond.Size}$ Carats</h2>
-            <i @click.stop="closeModal()">x</i>
           </div>
         </div>
         <div class="modalTitle">
@@ -19,8 +18,23 @@
           <span>Price: ${diamond.Price}$ ${diamond.CurrencyCode}$</span>
         </div>
       </div>
-      <div class="modalBody">
-        <div class="dia-video">
+      <i @click.stop="closeModal()"
+        ><svg
+          class="icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path></svg
+      ></i>
+      <div class="modalBody row">
+        <div class="dia-video col-12 col-md-8">
           <video
             id="background-video"
             :poster="diamond.Poster"
@@ -31,7 +45,7 @@
             <source :src="diamond.Video" />
           </video>
         </div>
-        <div class="dia-info">
+        <div class="dia-info col-12 col-md-4">
           <h3>More Information</h3>
           <hr />
           <ul>
@@ -114,12 +128,29 @@ export default {
   position: fixed;
   background-color: white;
   top: 5vh;
-  left: 5vw;
+  left: 10vw;
   overflow-y: auto;
   overflow-x: hidden;
-  width: 90vw;
-  height: 90vh;
+  width: 80vw;
+  height: 70vh;
   z-index: 20;
+  i {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: black;
+    width: 1.5rem;
+    svg {
+      transition: 0.75s cubic-bezier(0.88, 0.12, 0.35, 0.81);
+      transform: rotate(0);
+    }
+    &:hover {
+      cursor: pointer;
+      svg {
+        transform: rotate(400deg);
+      }
+    }
+  }
 }
 
 .modalHeader {
@@ -132,6 +163,7 @@ export default {
 }
 
 .modalBody {
+  height: 50vh;
   margin-top: 30px;
 }
 
@@ -141,16 +173,25 @@ export default {
 }
 
 #background-video {
-  width: 70%;
+  width: 100%;
+  max-height: 100%;
   object-fit: cover;
 }
 
 .dia-info {
-  padding: 30px;
+  padding: 20px;
   margin-top: 30px;
   ul {
-    -webkit-column-count: 2;
-    column-count: 2;
+    -webkit-column-count: 1;
+    column-count: 1;
   }
+  li {
+    margin-top: 10px;
+  }
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 </style>

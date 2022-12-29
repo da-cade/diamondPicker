@@ -14,50 +14,7 @@
         >
           ${state.showX}$
         </button> -->
-      <div class="product__accordion accordion">
-        <details>
-          <summary>
-            <div class="summary__title">
-              <h2 class="h4 accordion__title">Showing ${state.showX}$</h2>
-              <!-- <svg
-                class="header-icon"
-                :class="{ rotate: isExpanded }"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                />
-              </svg> -->
-            </div>
-          </summary>
-          <div class="accordion__content rte">
-            <ul class="dropdown-menu" aria-labelledby="showMoreDropdown">
-              <li>
-                <a class="dropdown-item" @click="state.showX = 20" href="#"
-                  >20</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" @click="state.showX = 50" href="#"
-                  >50</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" @click="state.showX = 100" href="#"
-                  >100</a
-                >
-              </li>
-            </ul>
-          </div>
-        </details>
-      </div>
-
+      <dropdown :showX="state.showX" @show-x="(i) => (state.showX = i)" />
       <!-- per page.</span -->
       <!-- > -->
     </div>
@@ -127,8 +84,9 @@ import { AppState } from "../AppState";
 import PaginationMenu from "./PaginationMenu.vue";
 import DetailsModal from "./DetailsModal.vue";
 import { diamondsService } from "../services/DiamondsService";
+import Dropdown from "./DropdownMenu.vue";
 export default {
-  components: { PaginationMenu, DetailsModal },
+  components: { PaginationMenu, DetailsModal, Dropdown },
   setup() {
     const state = reactive({
       showX: 20,
@@ -138,6 +96,7 @@ export default {
     });
 
     watchEffect(() => {
+      console.log(state.showX);
       if (AppState.makeRequest) {
         AppState.makeRequest = false;
         if (AppState.timeoutID) {
@@ -172,7 +131,7 @@ export default {
     });
 
     function popModal(serialNumber) {
-      const diamond = AppState.diamonds.slice().find((d) => {
+      const diamond = [...AppState.diamonds].slice().find((d) => {
         return d.SerialNumber == serialNumber;
       });
       if (state.diamondDetails == diamond) {
@@ -250,6 +209,11 @@ $bg-light: white;
   opacity: 0;
 }
 
+.section__index {
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+}
+
 table {
   width: 100%;
 }
@@ -272,6 +236,6 @@ tbody > tr:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80vh;
+  height: 60vh;
 }
 </style>

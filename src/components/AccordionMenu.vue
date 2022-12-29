@@ -1,10 +1,8 @@
 <template>
-  <div class="custom-accordion" id="accordionExample">
+  <div class="custom-accordion" id="filterAccordion">
     <div class="">
-      <h2 class="accordion-heading">
-        <button class="button" @click="isExpanded = !isExpanded">
-          Advanced Filters
-        </button>
+      <h2 class="accordion-heading button" @click="isExpanded = !isExpanded">
+        Advanced Filters
         <svg
           class="header-icon"
           :class="{ rotate: isExpanded }"
@@ -89,20 +87,23 @@ export default {
 
 <style lang="scss" scoped>
 .accordion-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 40px;
+  width: 100%;
   line-height: 40px;
   padding: 0 40px 0 8px;
   position: relative;
-  color: #fff;
-  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .header-icon {
-  color: black;
-  position: absolute;
+  // color: white;
   height: 1.5rem;
   width: 1.5rem;
-  top: 5px;
   transform: rotate(-180deg);
   transition-duration: 0.3s;
 }
