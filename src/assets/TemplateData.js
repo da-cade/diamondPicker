@@ -5,9 +5,9 @@ export const TemplateData = {
       handle: "Price Range",
       values: [1000, 50000],
       min: 100,
-      max: 50000,
+      max: 100000,
       fromVal: 100,
-      toVal: 50000,
+      toVal: 100000,
     },
     SizeRange: {
       title: "SizeRange",

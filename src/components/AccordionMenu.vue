@@ -30,7 +30,7 @@
       <div class="accordion-item-details row" v-show="isExpanded">
         <!-- NOTE bs5 -->
         <div
-          class="col-6 mb-5"
+          class="col-12 col-md-6"
           v-for="filter in secondLabelSet"
           :key="filter.handle"
         >

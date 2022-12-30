@@ -73,7 +73,7 @@ $accent-color: rgb(255, 201, 201);
 .gem-buttons {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
   width: 100%;
 }
@@ -91,12 +91,12 @@ $accent-color: rgb(255, 201, 201);
   height: fit-content;
   z-index: 0;
   transition: transform 150ms ease;
+  min-width: 4em;
   width: calc(var(--font-heading-scale) * 4em);
-  // width: 5rem;
   i,
   input {
+    font-size: 3em;
     font-size: calc(var(--font-heading-scale) * 3em);
-    // font-size: 3rem;
     background-color: transparent;
     z-index: 2;
     pointer-events: auto;
@@ -141,6 +141,12 @@ $accent-color: rgb(255, 201, 201);
   i,
   label {
     color: rgb(0, 0, 0);
+  }
+}
+
+@media (max-width: 749px) {
+  .gem-buttons {
+    justify-content: start;
   }
 }
 </style>

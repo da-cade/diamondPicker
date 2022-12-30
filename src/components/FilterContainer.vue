@@ -11,7 +11,7 @@
 
     <div class="section__filters row">
       <div
-        class="col-6 mb-5"
+        class="col-12 col-md-6"
         v-for="filter in firstLabelSet"
         :key="filter.handle"
       >
@@ -48,5 +48,11 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.section__filters {
+  @media (min-width: 750px) {
+    margin-bottom: 2rem;
+  }
 }
 </style>

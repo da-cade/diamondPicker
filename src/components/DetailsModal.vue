@@ -1,5 +1,5 @@
 <template>
-  <div class="modalDialog" ref="dialog">
+  <div class="modalDialog page-width" ref="dialog">
     <div class="modalContent">
       <div class="modalHeader">
         <div class="modalTitle">
@@ -63,15 +63,19 @@
 
 <script>
 import { computed, onMounted, ref } from "vue";
-import { AppState } from "../AppState";
 export default {
   props: {
     diamond: {
       type: Object,
       required: true,
     },
+    showModal: {
+      type: Boolean,
+      required: true,
+    },
   },
-  setup(props) {
+  emits: ["inFocus", "closeModal"],
+  setup(props, { emit }) {
     const infoObj = computed(() => {
       const exceptions = Object.keys(props.diamond).slice(0, 10);
       const reduced = Object.keys(props.diamond)
@@ -83,6 +87,7 @@ export default {
         }, {});
       return reduced;
     });
+
     const dialog = ref();
 
     function closeModal() {
@@ -90,7 +95,7 @@ export default {
       document.body.style.position = "";
       document.body.style.top = "";
       window.scrollTo(0, parseInt(scrollY || "0") * -1);
-      AppState.showModal = false;
+      emit("closeModal");
     }
 
     onMounted(() => {
@@ -105,7 +110,6 @@ export default {
     return {
       dialog,
       infoObj,
-      showModal: computed(() => AppState.showModal),
       closeModal,
     };
   },
@@ -114,13 +118,16 @@ export default {
 
 
 <style lang="scss" scoped>
+.page-width {
+  width: 100vw;
+}
+
 .modalDialog {
   position: fixed;
   top: 0;
   right: 0;
   background-color: rgba(0, 0, 0, 0.438);
   height: 100vh;
-  width: 100vw;
   z-index: 11;
 }
 
@@ -131,8 +138,8 @@ export default {
   left: 10vw;
   overflow-y: auto;
   overflow-x: hidden;
-  width: 80vw;
-  height: 70vh;
+  width: 80%;
+  height: 70%;
   z-index: 20;
   i {
     position: absolute;

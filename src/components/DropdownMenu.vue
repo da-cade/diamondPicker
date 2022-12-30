@@ -99,10 +99,14 @@ export default {
   justify-content: center;
   align-items: center;
   transition: 150ms ease-out;
-  &:hover {
+  padding: 0 10px;
+  &::after:hover {
+    box-shadow: 0 0 0 calc(var(--buttons-border-width) + var(--border-offset))
+        rgba(black, var(--border-opacity)),
+      0 0 0 var(--buttons-border-width)
+        rgba(var(--color-button), var(--alpha-button-background));
     cursor: pointer;
   }
-  padding: 0 10px;
 }
 
 .accordion-heading {
