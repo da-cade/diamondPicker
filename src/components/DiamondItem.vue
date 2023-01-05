@@ -7,13 +7,14 @@
     <th scope="col">${diamond.Cut}$</th>
     <th scope="col">${diamond.Color}$</th>
     <th scope="col">${diamond.Clarity}$</th>
-    <th scope="col">${diamond.Price}$</th>
+    <th scope="col">${formattedPrice}$</th>
     <th scope="col">${diamond.Certification}$</th>
   </tr>
 </template>
 
 
 <script>
+import { computed } from "vue";
 export default {
   props: {
     diamond: {
@@ -22,8 +23,17 @@ export default {
     },
   },
   emits: ["showModal"],
-  setup() {
-    return {};
+  setup(props) {
+    const formattedPrice = computed(() => {
+      const price = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: props.diamond.CurrencyCode,
+      }).format(props.diamond.Price);
+      return price;
+    });
+    return {
+      formattedPrice,
+    };
   },
 };
 </script>

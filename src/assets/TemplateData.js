@@ -3,7 +3,7 @@ export const TemplateData = {
     PriceRange: {
       title: "PriceRange",
       handle: "Price Range",
-      values: [1000, 50000],
+      values: [100, 100000],
       min: 100,
       max: 100000,
       fromVal: 100,

@@ -69,10 +69,6 @@ export default {
       type: Object,
       required: true,
     },
-    showModal: {
-      type: Boolean,
-      required: true,
-    },
   },
   emits: ["inFocus", "closeModal"],
   setup(props, { emit }) {
@@ -118,9 +114,9 @@ export default {
 
 
 <style lang="scss" scoped>
-.page-width {
-  width: 100vw;
-}
+// .page-width {
+//   width: 100vw;
+// }
 
 .modalDialog {
   position: fixed;

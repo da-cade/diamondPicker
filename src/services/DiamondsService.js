@@ -10,7 +10,7 @@ class DiamondsService {
         formData[key] = filterData[key].values;
       }
       formData["Page"] = AppState.currentPage;
-      // formData["Shape"] = AppState.shapes;
+      formData["Shape"] = AppState.shapes;
       console.log(formData)
       return formData;
     } catch (error) {
@@ -18,8 +18,8 @@ class DiamondsService {
     }
   }
   async sendRequest(req) {
-    let res = await api.post("/diamonds", req);
-    // let res = await api.post("/apps/api/diamonds", req);
+    // let res = await api.post("/diamonds", req);
+    let res = await api.post("/apps/api/diamonds", req);
     return res;
   }
   async getDiamondsByQuery() {

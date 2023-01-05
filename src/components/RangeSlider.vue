@@ -168,17 +168,20 @@ export default {
     );
 
     function updateDiamonds(filter, rangeValue, update) {
-      AppState.filterValues[filter][rangeValue] = +update;
-      let reactiveIndex = AppState.filterValues[filter];
+      let reactiveIndex = { ...AppState.filterValues[filter] };
+      reactiveIndex[rangeValue] = +update;
       if (!TemplateData.intFilters.includes(filter)) {
         reactiveIndex.values = reactiveIndex.labels.slice(
           +reactiveIndex.fromVal,
           +reactiveIndex.toVal
         );
+        reactiveIndex.values = reactiveIndex.values.map(
+          (v) => (v = v.split(" ").join(""))
+        );
       } else {
         reactiveIndex.values = [+reactiveIndex.fromVal, +reactiveIndex.toVal];
       }
-      console.log(AppState.filterValues[filter].values);
+      AppState.filterValues[filter] = reactiveIndex;
       AppState.makeRequest = true;
     }
 

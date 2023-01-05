@@ -9,29 +9,141 @@
         <thead>
           <tr>
             <th scope="col" class="sortButton" @click="sortItems('Shape')">
-              <span>Shape <i></i></span>
+              <span>Shape </span>
+              <i v-if="state.sortBy == 'Shape'"
+                ><svg
+                  class="header-icon"
+                  :class="{ rotate: state.sortReverse }"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  /></svg
+              ></i>
             </th>
             <th scope="col" class="sortButton" @click="sortItems('Size')">
-              <span>Carat <i></i></span>
+              <span>Carat </span>
+              <i v-if="state.sortBy == 'Size'"
+                ><svg
+                  class="header-icon"
+                  :class="{ rotate: state.sortReverse }"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  /></svg
+              ></i>
             </th>
             <th scope="col" class="sortButton" @click="sortItems('Cut')">
-              <span>Cut <i></i></span>
+              <span>Cut </span>
+              <i v-if="state.sortBy == 'Cut'"
+                ><svg
+                  class="header-icon"
+                  :class="{ rotate: state.sortReverse }"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  /></svg
+              ></i>
             </th>
             <th scope="col" class="sortButton" @click="sortItems('Color')">
-              <span>Color <i></i></span>
+              <span>Color </span>
+              <i v-if="state.sortBy == 'Color'"
+                ><svg
+                  class="header-icon"
+                  :class="{ rotate: state.sortReverse }"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  /></svg
+              ></i>
             </th>
             <th scope="col" class="sortButton" @click="sortItems('Clarity')">
-              <span>Clarity <i></i></span>
+              <span>Clarity </span>
+              <i v-if="state.sortBy == 'Clarity'"
+                ><svg
+                  class="header-icon"
+                  :class="{ rotate: state.sortReverse }"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  /></svg
+              ></i>
             </th>
             <th scope="col" class="sortButton" @click="sortItems('Price')">
-              <span>Price <i></i></span>
+              <span>Price </span>
+              <i v-if="state.sortBy == 'Price'"
+                ><svg
+                  class="header-icon"
+                  :class="{ rotate: state.sortReverse }"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  /></svg
+              ></i>
             </th>
             <th
               scope="col"
               class="sortButton"
               @click="sortItems('Certification')"
             >
-              <span>Lab <i></i></span>
+              <span>Lab</span>
+              <i v-if="state.sortBy == 'Certification'"
+                ><svg
+                  class="header-icon"
+                  :class="{ rotate: state.sortReverse }"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  /></svg
+              ></i>
             </th>
           </tr>
         </thead>
@@ -114,12 +226,11 @@ export default {
 
     function sortItems(sortValue) {
       if (AppState.diamonds.length) {
-        console.log(sortValue);
         if (sortValue == "Cut" || sortValue == "Clarity") {
           const sortArray = TemplateData.filterLabels[sortValue].labels;
           AppState.diamonds.sort(
             (a, b) =>
-              sortArray.indexOf(a[sortValue]) - sortArray.indexOf(b[sortValue])
+              sortArray.indexOf(b[sortValue]) - sortArray.indexOf(a[sortValue])
           );
         } else if (sortValue == "Price" || sortValue == "Size") {
           AppState.diamonds.sort((a, b) => +b[sortValue] - +a[sortValue]);
@@ -189,6 +300,24 @@ table {
 
 thead th {
   text-align: start;
+}
+
+th i {
+  display: inline-flex;
+  position: absolute;
+  justify-content: center;
+  align-content: center;
+  right: 2px;
+  .header-icon {
+    width: 1rem;
+    transform: rotate(0deg);
+    transition-duration: 0.3s;
+  }
+
+  .header-icon.rotate {
+    transform: rotate(-180deg);
+    transition-duration: 0.3s;
+  }
 }
 
 .sortButton {
