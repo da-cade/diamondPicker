@@ -110,9 +110,7 @@ export default {
 
       let pageList = [...state.pageList];
 
-      let paginateDirection = pageList.slice(0, 4).includes(pageNum)
-        ? true
-        : false;
+      let paginateDirection = pageList.slice(0, 4).includes(pageNum) ? 1 : -1;
 
       let distanceShifted = shift(pageNum, paginateDirection) - 1;
 
@@ -126,6 +124,7 @@ export default {
       const underline = document.querySelector(".underline");
       const center = document.querySelector(".current-page");
       const pages = document.querySelectorAll(".page-button");
+      const dasher = document.querySelector(".dasher-line");
 
       function animationStack() {
         // first, we start the dasher
@@ -136,6 +135,7 @@ export default {
         // pop up rest
         // pop up center
         // underline
+        animationLib.dasher(dasher, direction, amount);
         animationLib.animateSlash(underline, -1);
         animationLib.vertSlide(center, -1);
         animationLib.vertSlide(pages, -1);
