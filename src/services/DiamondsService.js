@@ -17,9 +17,10 @@ class DiamondsService {
       console.log(error.message);
     }
   }
+
   async sendRequest(req) {
-    // let res = await api.post("/diamonds", req);
-    let res = await api.post("/apps/api/diamonds", req);
+    let res = await api.post("/diamonds", req);
+    // let res = await api.post("/apps/api/diamonds", req);
     return res;
   }
   async getDiamondsByQuery() {

@@ -1,39 +1,46 @@
 <template>
-  <div class="modalDialog page-width" ref="dialog">
+  <div class="modalDialog" ref="dialog">
     <div class="modalContent">
       <div class="modalHeader">
-        <div class="modalTitle">
-          <h2>Diamond #${diamond.SerialNumber}$</h2>
-          <div class="modalTitle">
-            <h2>${diamond.Shape}$, ${diamond.Size}$ Carats</h2>
+        <div class="buttonBar">
+          <button v-if="!mobile" class="close" @click.stop="closeModal()">
+            Close
+          </button>
+          <i v-else @click.stop="closeModal()"
+            ><svg
+              class="icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path></svg
+          ></i>
+        </div>
+        <div class="modalTitle modalWidth">
+          <div class="titleItem">
+            <h1>Diamond #${diamond.SerialNumber}$</h1>
+            <span class="mt-2">
+              Certified By:
+              <a :href="diamond.CertificatePath"
+                >${diamond.Certification}$</a
+              ></span
+            >
+          </div>
+          <div class="titleItem align-items-end">
+            <h2 class="text-end">${diamond.Shape}$, ${diamond.Size}$ Carats</h2>
+            <span class="text-end mt-2"
+              >Price: ${diamond.Price}$ ${diamond.CurrencyCode}$</span
+            >
           </div>
         </div>
-        <div class="modalTitle">
-          <span>
-            Certified By:
-            <a :href="diamond.CertificatePath"
-              >${diamond.Certification}$</a
-            ></span
-          >
-          <span>Price: ${diamond.Price}$ ${diamond.CurrencyCode}$</span>
-        </div>
       </div>
-      <i @click.stop="closeModal()"
-        ><svg
-          class="icon"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          ></path></svg
-      ></i>
-      <div class="modalBody row">
+      <div class="modalBody modalWidth row">
         <div class="dia-video col-12 col-md-8">
           <video
             id="background-video"
@@ -63,6 +70,7 @@
 
 <script>
 import { computed, onMounted, ref } from "vue";
+import { AppState } from "../AppState";
 export default {
   props: {
     diamond: {
@@ -106,6 +114,7 @@ export default {
     return {
       dialog,
       infoObj,
+      mobile: computed(AppState.mobile),
       closeModal,
     };
   },
@@ -114,19 +123,17 @@ export default {
 
 
 <style lang="scss" scoped>
-// .page-width {
-//   width: 100vw;
-// }
-
 .modalDialog {
   position: fixed;
   top: 0;
   right: 0;
   background-color: rgba(0, 0, 0, 0.438);
   height: 100vh;
+  width: 100%;
   z-index: 11;
 }
 
+// NOTE longer on media
 .modalContent {
   position: fixed;
   background-color: white;
@@ -137,34 +144,58 @@ export default {
   width: 80%;
   height: 70%;
   z-index: 20;
-  i {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    color: black;
-    width: 1.5rem;
-    svg {
-      transition: 0.75s cubic-bezier(0.88, 0.12, 0.35, 0.81);
-      transform: rotate(0);
-    }
-    &:hover {
-      cursor: pointer;
-      svg {
-        transform: rotate(400deg);
-      }
-    }
-  }
 }
 
 .modalHeader {
-  padding: 30px;
+  padding: 10px;
+  width: 100%;
+}
+
+// NOTE change content to x media
+.buttonBar {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  margin-bottom: 2rem;
+  .close {
+    margin: 0 0 0 auto;
+    background: none;
+    border: 2px solid;
+    padding: 1em 2em;
+    // color: #ff7f82;
+    transition: 0.25s;
+    &:hover,
+    &:focus {
+      cursor: pointer;
+      border-color: #ff7f82;
+      color: #fff;
+      box-shadow: inset -3.5em 0 0 0 adjust-hue(#ff7f82, 45deg),
+        inset 3.5em 0 0 0 adjust-hue(#ff7f82, 45deg);
+    }
+  }
+  i {
+    color: black;
+    width: 1.5rem;
+  }
+}
+
+// NOTE thinner on media
+.modalWidth {
+  padding: 0 5rem 0 5rem;
 }
 
 .modalTitle {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 
+.titleItem {
+  display: flex;
+  flex-direction: column;
+}
+
+// NOTE longer on media
 .modalBody {
   height: 50vh;
   margin-top: 30px;
@@ -175,10 +206,11 @@ export default {
   justify-content: center;
 }
 
+// NOTE full width
 #background-video {
-  width: 100%;
-  max-height: 100%;
-  object-fit: cover;
+  width: 70%;
+  // max-height: 80%;
+  object-fit: contain;
 }
 
 .dia-info {

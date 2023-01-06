@@ -12,7 +12,7 @@ export const AppState = reactive({
 
   filterValues: JSON.parse(JSON.stringify(TemplateData.filterLabels)),
 
-  buildWheel: false,
+  buildWheel: true,
   totalNumber: 0,
   currentPage: 1,
   displayPage: 1,
@@ -21,4 +21,5 @@ export const AppState = reactive({
   makeRequest: false,
   timeoutID: undefined,
   loaded: false,
+  mobile: () => window.screen.width <= 600
 });

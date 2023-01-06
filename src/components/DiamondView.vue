@@ -4,6 +4,12 @@
       <dropdown :showX="state.showX" @show-x="(i) => (state.showX = i)" />
     </div>
     <div v-if="!loaded" class="loader">Loading</div>
+    <div v-else-if="!displayDiamonds.length" class="no-diamonds">
+      <h3>
+        There aren't any diamonds that match these search terms right now.
+        <i></i>
+      </h3>
+    </div>
     <div v-else class="section__index">
       <table class="table">
         <thead>
@@ -200,6 +206,7 @@ export default {
         }
         AppState.timeoutID = setTimeout(async () => {
           AppState.timeoutID = undefined;
+          AppState.buildWheel = true;
           await diamondsService.getDiamondsByQuery();
         }, 1000);
       }
@@ -331,6 +338,13 @@ th i {
 }
 
 .loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.no-diamonds {
   display: flex;
   align-items: center;
   justify-content: center;

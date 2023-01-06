@@ -1,38 +1,7 @@
 <template>
   <div class="section__pagination">
-    <!-- <div class="page-item">
-      <span class="page-button" @click="showPage(state.pageList[0])">
-        ${state.pageList[0]}$
-      </span>
-    </div>
-    <div class="page-item">
-      <span class="page-button" @click="showPage(state.pageList[1])">
-        ${state.pageList[1]}$
-      </span>
-    </div>
-    <div class="page-item">
-      <span class="page-button" @click="showPage(state.pageList[2])">
-        ${state.pageList[2]}$
-      </span>
-    </div>
-    
-    <div class="page-item">
-      <span class="page-button" @click="showPage(state.pageList[4])">
-        ${state.pageList[4]}$
-      </span>
-    </div>
-    <div class="page-item">
-      <span class="page-button" @click="showPage(state.pageList[5])">
-        ${state.pageList[5]}$
-      </span>
-    </div>
-    <div class="page-item">
-      <span class="page-button" @click="showPage(state.pageList[6])">
-        ${state.pageList[6]}$
-      </span>
-    </div> -->
     <div class="pagination-menu">
-      <div class="page-item">
+      <div class="page-item" v-if="state.pageList[state.pageList.length - 3]">
         <div
           class="page-button"
           @click="showPage(state.pageList[state.pageList.length - 3])"
@@ -40,7 +9,7 @@
           <span>${state.pageList[state.pageList.length - 3]}$</span>
         </div>
       </div>
-      <div class="page-item">
+      <div class="page-item" v-if="state.pageList[state.pageList.length - 2]">
         <div
           class="page-button"
           @click="showPage(state.pageList[state.pageList.length - 2])"
@@ -48,7 +17,7 @@
           <span>${state.pageList[state.pageList.length - 2]}$</span>
         </div>
       </div>
-      <div class="page-item">
+      <div class="page-item" v-if="state.pageList[state.pageList.length - 1]">
         <div
           class="page-button"
           @click="showPage(state.pageList[state.pageList.length - 1])"
@@ -56,38 +25,40 @@
           <span>${state.pageList[state.pageList.length - 1]}$</span>
         </div>
       </div>
-      <div class="page-item">
-        <div class="page-button">
-          <span>${state.pageList[0]}$</span>
+      <div class="center-item">
+        <div class="page-item">
+          <div class="page-button">
+            <span>${state.pageList[0]}$</span>
+          </div>
         </div>
-      </div>
-      <div class="diamond-input">
-        <div id="cut-diamond">
-          <div id="diamond-overlay">
-            <div class="page-display grow">
-              <form action="" @submit.prevent="showPage(state.localPage)">
-                <input
-                  type="number"
-                  class="current-page"
-                  v-model="state.localPage"
-                />
-              </form>
-              <div class="underline"></div>
+        <div class="diamond-input">
+          <div id="cut-diamond">
+            <div id="diamond-overlay">
+              <div class="page-display grow">
+                <form action="" @submit.prevent="showPage(state.localPage)">
+                  <input
+                    type="number"
+                    class="current-page"
+                    v-model="state.localPage"
+                  />
+                </form>
+                <div class="underline"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="page-item">
+      <div class="page-item" v-if="state.pageList[1]">
         <div class="page-button" @click="showPage(state.pageList[1])">
           <span>${state.pageList[1]}$</span>
         </div>
       </div>
-      <div class="page-item">
+      <div class="page-item" v-if="state.pageList[2]">
         <div class="page-button" @click="showPage(state.pageList[2])">
           <span>${state.pageList[2]}$</span>
         </div>
       </div>
-      <div class="page-item">
+      <div class="page-item" v-if="state.pageList[3]">
         <div class="page-button" @click="showPage(state.pageList[3])">
           <span>${state.pageList[3]}$</span>
         </div>
@@ -101,6 +72,7 @@
 import { computed, reactive, watchEffect } from "vue";
 import { AppState } from "../AppState";
 import { diamondsService } from "../services/DiamondsService";
+import { animationLib } from "../utils/AnimationLib";
 export default {
   props: {
     showX: {
@@ -112,8 +84,7 @@ export default {
   setup(props) {
     const state = reactive({
       pageList: [],
-      localPage: 1,
-      buildWheel: true,
+      localPage: undefined,
     });
     const lastPage = computed(() => {
       return Math.ceil(AppState.totalNumber / props.showX);
@@ -148,78 +119,29 @@ export default {
       animatePages(paginateDirection, pageList, distanceShifted);
     }
 
-    function animateSlash(vertDirection) {
-      const underlineSlash =
-        vertDirection == 1
-          ? [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }]
-          : [{ transform: "scaleX(1)" }, { transform: "scaleX(0)" }];
-
-      const underlineTiming = {
-        fill: "forwards",
-        duration: 100,
-        delay: vertDirection == -1 ? 0 : 500,
-        easing: "linear",
-      };
+    function animatePages(direction, pageList, amount) {
+      // here we're going to run a dasher animation
+      // we're also going to dropdown all the elements.
 
       const underline = document.querySelector(".underline");
-      underline.animate(underlineSlash, underlineTiming);
-    }
-
-    function animateCenter(vertDirection) {
-      const centerPop =
-        vertDirection == -1
-          ? [{ transform: "translateY(0)" }, { transform: `translateY(100%)` }]
-          : [{ transform: `translateY(100%)` }, { transform: "translateY(0)" }];
-      const centerTiming = {
-        duration: 250,
-        delay: 0,
-        fill: "forwards",
-        iterations: 1,
-        easing: "cubic-bezier(0.6, 0.14, 0.9, 0.55)",
-      };
-
       const center = document.querySelector(".current-page");
+      const pages = document.querySelectorAll(".page-button");
 
-      center.animate(centerPop, centerTiming);
-    }
-
-    function animatePages(direction, pageList, amount) {
-      const pages = document.querySelectorAll(".page-item");
-
-      const slideRight = [
-        { transform: "translateX(0)" },
-        { transform: `translateX(-${amount}00%)` },
-      ];
-
-      const slideLeft = [
-        { transform: "translateX(0)" },
-        { transform: `translateX(${amount}00%)` },
-      ];
-
-      const returnHome = [
-        {
-          transform: "translateX(0)",
-        },
-      ];
-
-      const slideTiming = {
-        fill: "both",
-        duration: 40 * (10 / (amount * (1 / amount))),
-        iterations: 1,
-        // easing: "cubic-bezier(0.6, 0.14, 0.9, 0.55)",
-        easing: "ease-in-out",
-      };
-
-      function animateElements(anim, timing, elems) {
-        elems.forEach((p) => p.animate(anim, timing));
-      }
-
-      function runAnimations() {
-        animateSlash(-1);
-        animateCenter(-1);
-        animateElements(direction ? slideRight : slideLeft, slideTiming, pages);
+      function animationStack() {
+        // first, we start the dasher
+        // next, un-underline
+        // next, we drop the center
+        // then we drop the rest
+        // change data
+        // pop up rest
+        // pop up center
+        // underline
+        animationLib.animateSlash(underline, -1);
+        animationLib.vertSlide(center, -1);
+        animationLib.vertSlide(pages, -1);
         return Promise.all(
           pages[pages.length - 1]
+            // eslint-disable-next-line prettier/prettier
             .getAnimations()
             .map((animation) => animation.finished)
         )
@@ -228,16 +150,16 @@ export default {
             state.localPage = pageList[0];
           })
           .then(() => {
-            animateElements(returnHome, slideTiming, pages);
+            animationLib.vertSlide(pages, 1);
           })
-          .then(() => animateCenter(1))
+          .then(() => animationLib.vertSlide(center, 1))
           .then(() => {
-            animateSlash(1);
+            animationLib.animateSlash(underline, 1);
           });
       }
 
       if (pageList) {
-        runAnimations();
+        animationStack();
       }
     }
 
@@ -271,12 +193,12 @@ export default {
     }
 
     watchEffect(() => {
-      if (AppState.loaded && state.buildWheel) {
-        state.buildWheel = false;
+      if (AppState.loaded && AppState.buildWheel) {
+        AppState.buildWheel = false;
         state.pageList = Array.from(Array(lastPage.value)).map((e, i) => i + 1);
         state.localPage = state.pageList[0];
-        animateCenter(1);
-        animateSlash(1);
+        animationLib.vertSlide(document.querySelector(".current-page"), 1);
+        animationLib.animateSlash(document.querySelector(".underline"), 1);
       }
     });
 
@@ -309,9 +231,48 @@ input[type="number"] {
 
 .pagination-menu {
   display: flex;
-  align-items: flex-start;
+  height: 3.5rem;
+  width: 18rem;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.page-item {
+  max-width: 1.3rem;
+}
+
+.page-button {
+  display: flex;
   justify-content: center;
+}
+
+.page-item:nth-child(1),
+.page-item:nth-child(7) {
+  font-size: 1em;
+}
+
+.page-item:nth-child(2),
+.page-item:nth-child(6) {
+  font-size: 1.15em;
+}
+.page-item:nth-child(3),
+.page-item:nth-child(5) {
+  font-size: 1.45em;
+}
+
+.page-item:hover {
+  cursor: pointer;
+}
+
+.center-item {
+  .page-item {
+    margin-top: 0 !important;
+  }
   position: relative;
+  align-self: flex-start;
+  width: 4rem;
+  display: flex;
+  justify-content: center;
 }
 
 .diamond-input {
@@ -319,14 +280,13 @@ input[type="number"] {
 }
 
 #cut-diamond {
+  position: relative;
   border-style: solid;
   border-color: transparent transparent black transparent;
   border-width: 0 15px 15px 15px;
   height: 0;
   width: 30px;
   box-sizing: content-box;
-  position: relative;
-  // margin: 10px 0 30px 0;
   z-index: 1;
   display: flex;
   justify-content: center;
@@ -348,7 +308,7 @@ input[type="number"] {
 #diamond-overlay {
   border-style: solid;
   border-color: transparent transparent white transparent;
-  border-width: 0 12px 12px 12px;
+  border-width: 0 13px 13px 13px;
   height: 0;
   top: 2px;
   width: 28px;
@@ -362,56 +322,46 @@ input[type="number"] {
 #diamond-overlay:after {
   content: "";
   position: absolute;
-  top: 14px;
-  left: -12px;
+  top: 13px;
+  left: -13px;
   width: 0;
   height: 0;
   border-style: solid;
   border-color: white transparent transparent transparent;
-  border-width: 36px 26px 0 26px;
+  border-width: 36px 27px 0 27px;
   z-index: 2;
 }
 
-.page-item {
-  overflow: hidden;
-  width: 40px;
-}
-
-.page-item:hover {
-  cursor: pointer;
-}
-
 .page-button {
-  border: black solid 2px;
-  padding: 0.5rem;
   text-align: center;
 }
 
 .page-display {
-  position: absolute;
-  top: 12px;
+  height: 40px;
+  min-width: 40px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   overflow: hidden;
+  z-index: 3;
 }
 
 .current-page {
-  z-index: 3;
-  width: 30px;
+  font-size: 1.65em !important;
+  width: 100%;
   background-color: transparent !important;
   padding: 0 !important;
   border-width: 0px !important;
   text-align: center;
+  appearance: inherit;
 }
 
 .underline {
-  position: absolute;
   background-color: black;
   border-radius: 2px;
   width: 15px;
   height: 1px;
-  margin: 0 auto;
-  bottom: 0;
   z-index: 4;
   transform: scaleX(0);
   transform-origin: bottom left;

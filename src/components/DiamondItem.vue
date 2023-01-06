@@ -1,7 +1,7 @@
 <template>
   <tr @click="$emit('showModal')">
     <th scope="col">
-      ${diamond.Shape == 'SQUARE' ? 'Princess' : diamond.Shape}$
+      ${diamond.Shape == 'Square' ? 'Princess' : diamond.Shape}$
     </th>
     <th scope="col">${diamond.Size}$</th>
     <th scope="col">${diamond.Cut}$</th>
